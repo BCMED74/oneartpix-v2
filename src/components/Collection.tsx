@@ -321,7 +321,7 @@ export default function Collection() {
 
                 <div className="mt-8">
                   
-                    href="#contact"
+                  <a href="#contact"
                     onClick={() => setSelected(null)}
                     className="block text-center py-4 transition-all duration-300"
                     style={{
