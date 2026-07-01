@@ -1,10 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 /* ============================================================
    COLLECTION — OneArtPix
    Carrousel "film-strip" : photogrammes qui s'agrandissent au survol
-   (desktop) · bande défilante (mobile) · modal + toggle Original/Twin
+   (desktop) · bande défilante (mobile) · fiche (modal) avec
+   navigation ← / → (souris + clavier) · toggle Original / Twin
    ============================================================ */
 
 /* === DONNÉES DES ŒUVRES === */
@@ -65,11 +66,32 @@ const perforations: React.CSSProperties = {
     "repeating-linear-gradient(to right, transparent 0 12px, rgba(255,255,255,0.06) 12px 26px)",
 };
 
+/* === Flèche de navigation de la fiche === */
+const navArrowStyle: React.CSSProperties = {
+  position: "absolute",
+  top: "50%",
+  transform: "translateY(-50%)",
+  zIndex: 60,
+  width: "48px",
+  height: "48px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "rgba(10,10,10,0.6)",
+  border: "1px solid rgba(201,169,110,0.4)",
+  color: "#C9A96E",
+  fontSize: "22px",
+  cursor: "pointer",
+  transition: "background 0.3s, color 0.3s",
+};
+
 export default function Collection() {
-  const [selected, setSelected] = useState<Artwork | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [showTwin, setShowTwin] = useState(false);
   const [active, setActive] = useState(0);      // photogramme agrandi (desktop)
   const [isDesktop, setIsDesktop] = useState(true);
+
+  const selected: Artwork | null = selectedIndex !== null ? ARTWORKS[selectedIndex] : null;
 
   /* === Détection desktop vs mobile === */
   useEffect(() => {
@@ -80,10 +102,29 @@ export default function Collection() {
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  const openModal = (art: Artwork) => {
-    setSelected(art);
+  /* === Ouverture / fermeture / navigation de la fiche === */
+  const openModal = (i: number) => { setSelectedIndex(i); setShowTwin(false); };
+  const closeModal = useCallback(() => setSelectedIndex(null), []);
+  const goPrev = useCallback(() => {
+    setSelectedIndex((n) => (n === null ? n : (n - 1 + ARTWORKS.length) % ARTWORKS.length));
     setShowTwin(false);
-  };
+  }, []);
+  const goNext = useCallback(() => {
+    setSelectedIndex((n) => (n === null ? n : (n + 1) % ARTWORKS.length));
+    setShowTwin(false);
+  }, []);
+
+  /* === Navigation clavier : Échap ferme, ← / → changent d'œuvre === */
+  useEffect(() => {
+    if (selectedIndex === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeModal();
+      else if (e.key === "ArrowLeft") goPrev();
+      else if (e.key === "ArrowRight") goNext();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [selectedIndex, closeModal, goPrev, goNext]);
 
   return (
     <section id="collection" className="py-24 md:py-32" style={{ background: "#0a0a0a" }}>
@@ -107,19 +148,18 @@ export default function Collection() {
           ========================================================== */}
       {isDesktop ? (
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
-          {/* perforation haut */}
           <div style={perforations} />
 
           <div
             className="flex"
-            style={{ gap: "3px", height: "clamp(360px, 60vh, 600px)", background: "#000" }}
+            style={{ gap: "3px", height: "clamp(300px, 44vh, 460px)", background: "#000" }}
             onMouseLeave={() => setActive(0)}
           >
             {ARTWORKS.map((art, i) => (
               <div
                 key={art.id}
                 onMouseEnter={() => setActive(i)}
-                onClick={() => openModal(art)}
+                onClick={() => openModal(i)}
                 className="relative overflow-hidden"
                 style={{
                   flexGrow: active === i ? 3 : 1,
@@ -136,12 +176,11 @@ export default function Collection() {
                   className="w-full h-full object-cover"
                   style={{
                     transition: "transform 0.7s ease, filter 0.6s ease",
-                    transform: active === i ? "scale(1.03)" : "scale(1.08)",
+                    transform: "scale(1.0)",
                     filter: active === i ? "none" : "brightness(0.6)",
                   }}
                 />
 
-                {/* Voile + infos (complètes seulement quand le cadre est actif) */}
                 <div
                   className="absolute inset-0 flex flex-col justify-end p-6 md:p-8"
                   style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 55%)" }}
@@ -171,7 +210,6 @@ export default function Collection() {
                   </span>
                 </div>
 
-                {/* Badge Twin */}
                 {art.isTwin && (
                   <div className="absolute top-4 right-4"
                        style={{
@@ -186,7 +224,6 @@ export default function Collection() {
             ))}
           </div>
 
-          {/* perforation bas */}
           <div style={perforations} />
 
           <p className="mt-5 text-center" style={{ color: "#555", fontSize: "10px", letterSpacing: "0.25em", textTransform: "uppercase" }}>
@@ -205,10 +242,10 @@ export default function Collection() {
               paddingBottom: "10px", WebkitOverflowScrolling: "touch",
             }}
           >
-            {ARTWORKS.map((art) => (
+            {ARTWORKS.map((art, i) => (
               <div
                 key={art.id}
-                onClick={() => openModal(art)}
+                onClick={() => openModal(i)}
                 className="relative overflow-hidden"
                 style={{
                   flex: "0 0 82%", scrollSnapAlign: "center",
@@ -245,14 +282,36 @@ export default function Collection() {
       )}
 
       {/* ==========================================================
-          MODAL (identique — toggle Original / Twin conservé)
+          FICHE (modal) — flèches ← / → + toggle Original / Twin
           ========================================================== */}
       {selected && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ background: "rgba(0,0,0,0.95)", backdropFilter: "blur(20px)" }}
-          onClick={() => setSelected(null)}
+          onClick={closeModal}
         >
+          {/* Flèche précédente */}
+          <button
+            aria-label="Previous"
+            onClick={(e) => { e.stopPropagation(); goPrev(); }}
+            style={{ ...navArrowStyle, left: "16px" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#C9A96E"; (e.currentTarget as HTMLElement).style.color = "#0a0a0a"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(10,10,10,0.6)"; (e.currentTarget as HTMLElement).style.color = "#C9A96E"; }}
+          >
+            ‹
+          </button>
+
+          {/* Flèche suivante */}
+          <button
+            aria-label="Next"
+            onClick={(e) => { e.stopPropagation(); goNext(); }}
+            style={{ ...navArrowStyle, right: "16px" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#C9A96E"; (e.currentTarget as HTMLElement).style.color = "#0a0a0a"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(10,10,10,0.6)"; (e.currentTarget as HTMLElement).style.color = "#C9A96E"; }}
+          >
+            ›
+          </button>
+
           <div
             className="max-w-5xl w-full max-h-screen overflow-auto"
             onClick={(e) => e.stopPropagation()}
@@ -263,7 +322,7 @@ export default function Collection() {
                 <p style={{ color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase" }}>{selected.location}</p>
                 <h3 className="font-display mt-1" style={{ fontSize: "1.8rem", fontWeight: 300, color: "#fff" }}>{selected.title}</h3>
               </div>
-              <button onClick={() => setSelected(null)} style={{ color: "#888", fontSize: "24px", background: "none", border: "none", cursor: "pointer" }}>×</button>
+              <button onClick={closeModal} style={{ color: "#888", fontSize: "24px", background: "none", border: "none", cursor: "pointer" }}>×</button>
             </div>
 
             <div className="grid md:grid-cols-2 gap-0">
@@ -320,22 +379,16 @@ export default function Collection() {
                 </div>
 
                 <div className="mt-8">
-                  
-                  <a href="#contact"
-                    onClick={() => setSelected(null)}
+                  <a
+                    href="#contact"
+                    onClick={closeModal}
                     className="block text-center py-4 transition-all duration-300"
                     style={{
                       background: "transparent", border: "1px solid #C9A96E", color: "#C9A96E",
                       fontSize: "11px", letterSpacing: "0.3em", textTransform: "uppercase", textDecoration: "none",
                     }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.background = "#C9A96E";
-                      (e.currentTarget as HTMLElement).style.color = "#0a0a0a";
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.background = "transparent";
-                      (e.currentTarget as HTMLElement).style.color = "#C9A96E";
-                    }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#C9A96E"; (e.currentTarget as HTMLElement).style.color = "#0a0a0a"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#C9A96E"; }}
                   >
                     Inquire about this piece
                   </a>
