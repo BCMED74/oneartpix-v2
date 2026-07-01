@@ -1,7 +1,13 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-/* === ARTWORK DATA === */
+/* ============================================================
+   COLLECTION — OneArtPix
+   Carrousel "film-strip" : photogrammes qui s'agrandissent au survol
+   (desktop) · bande défilante (mobile) · modal + toggle Original/Twin
+   ============================================================ */
+
+/* === DONNÉES DES ŒUVRES === */
 const ARTWORKS = [
   {
     id: "guardians",
@@ -50,114 +56,197 @@ const ARTWORKS = [
   },
 ];
 
-/* === COLLECTION SECTION === */
+type Artwork = (typeof ARTWORKS)[number];
+
+/* === Bande de perforations (look pellicule) === */
+const perforations: React.CSSProperties = {
+  height: "12px",
+  background:
+    "repeating-linear-gradient(to right, transparent 0 12px, rgba(255,255,255,0.06) 12px 26px)",
+};
+
 export default function Collection() {
-  const [selected, setSelected] = useState<(typeof ARTWORKS)[0] | null>(null);
+  const [selected, setSelected] = useState<Artwork | null>(null);
   const [showTwin, setShowTwin] = useState(false);
+  const [active, setActive] = useState(0);      // photogramme agrandi (desktop)
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  /* === Détection desktop vs mobile === */
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  const openModal = (art: Artwork) => {
+    setSelected(art);
+    setShowTwin(false);
+  };
 
   return (
-    <section
-      id="collection"
-      className="py-32 px-8"
-      style={{ background: "#0a0a0a" }}
-    >
-      {/* === HEADER === */}
-      <div className="max-w-screen-2xl mx-auto mb-20">
-        <p
-          className="mb-4 tracking-widest uppercase"
-          style={{ color: "#C9A96E", fontSize: "11px", letterSpacing: "0.4em" }}
-        >
+    <section id="collection" className="py-24 md:py-32" style={{ background: "#0a0a0a" }}>
+      {/* === EN-TÊTE === */}
+      <div className="max-w-screen-2xl mx-auto mb-14 md:mb-16 px-6 md:px-12">
+        <p className="mb-4 tracking-widest uppercase"
+           style={{ color: "#C9A96E", fontSize: "11px", letterSpacing: "0.4em" }}>
           Curated Selection
         </p>
-        <h2
-          className="font-display"
-          style={{ fontSize: "clamp(2rem, 5vw, 4rem)", fontWeight: 300, color: "#fff" }}
-        >
+        <h2 className="font-display"
+            style={{ fontSize: "clamp(2rem, 4.5vw, 3.75rem)", fontWeight: 300, color: "#fff" }}>
           The <em style={{ color: "#C9A96E" }}>Collection</em>
         </h2>
-        <p
-          className="mt-4"
-          style={{ color: "#888", fontSize: "13px", letterSpacing: "0.15em" }}
-        >
-          5 editions · 2 artist proofs · Signed & numbered · Made to order
+        <p className="mt-4" style={{ color: "#888", fontSize: "13px", letterSpacing: "0.15em" }}>
+          5 editions · 2 artist proofs · Signed &amp; numbered · Made to order
         </p>
       </div>
 
-      {/* === GRID === */}
-      <div
-        className="max-w-screen-2xl mx-auto grid gap-1"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))" }}
-      >
-        {ARTWORKS.map((art) => (
+      {/* ==========================================================
+          DESKTOP — Pellicule : photogrammes qui s'agrandissent
+          ========================================================== */}
+      {isDesktop ? (
+        <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
+          {/* perforation haut */}
+          <div style={perforations} />
+
           <div
-            key={art.id}
-            className="relative overflow-hidden group"
-            style={{ aspectRatio: "4/3", cursor: "pointer", background: "#111" }}
-            onClick={() => { setSelected(art); setShowTwin(false); }}
+            className="flex"
+            style={{ gap: "3px", height: "clamp(360px, 60vh, 600px)", background: "#000" }}
+            onMouseLeave={() => setActive(0)}
           >
-            <img
-              src={art.images.main}
-              alt={art.title}
-              className="w-full h-full object-cover transition-transform duration-700"
-              style={{ transform: "scale(1.02)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.08)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
-            />
-
-            {/* Overlay */}
-            <div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8"
-              style={{
-                background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%)",
-              }}
-            >
-              <p style={{ color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: "8px" }}>
-                {art.location}
-              </p>
-              <h3
-                className="font-display mb-4"
-                style={{ fontSize: "1.8rem", fontWeight: 300, color: "#fff" }}
-              >
-                {art.title}
-              </h3>
-              <span
-                style={{
-                  display: "inline-block",
-                  color: "#C9A96E",
-                  fontSize: "10px",
-                  letterSpacing: "0.3em",
-                  textTransform: "uppercase",
-                  border: "1px solid rgba(201,169,110,0.5)",
-                  padding: "8px 20px",
-                  width: "fit-content",
-                }}
-              >
-                Discover
-              </span>
-            </div>
-
-            {/* Twin badge */}
-            {art.isTwin && (
+            {ARTWORKS.map((art, i) => (
               <div
-                className="absolute top-4 right-4"
+                key={art.id}
+                onMouseEnter={() => setActive(i)}
+                onClick={() => openModal(art)}
+                className="relative overflow-hidden"
                 style={{
-                  background: "rgba(201,169,110,0.1)",
-                  border: "1px solid rgba(201,169,110,0.4)",
-                  color: "#C9A96E",
-                  fontSize: "8px",
-                  letterSpacing: "0.2em",
-                  padding: "4px 10px",
-                  textTransform: "uppercase",
+                  flexGrow: active === i ? 3 : 1,
+                  flexBasis: 0,
+                  minWidth: 0,
+                  cursor: "pointer",
+                  transition: "flex-grow 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+                  background: "#111",
                 }}
               >
-                Twin
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+                <img
+                  src={art.images.main}
+                  alt={art.title}
+                  className="w-full h-full object-cover"
+                  style={{
+                    transition: "transform 0.7s ease, filter 0.6s ease",
+                    transform: active === i ? "scale(1.03)" : "scale(1.08)",
+                    filter: active === i ? "none" : "brightness(0.6)",
+                  }}
+                />
 
-      {/* === MODAL === */}
+                {/* Voile + infos (complètes seulement quand le cadre est actif) */}
+                <div
+                  className="absolute inset-0 flex flex-col justify-end p-6 md:p-8"
+                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 55%)" }}
+                >
+                  <p style={{ color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: "6px" }}>
+                    {art.location}
+                  </p>
+                  <h3 className="font-display"
+                      style={{
+                        fontSize: "1.7rem", fontWeight: 300, color: "#fff",
+                        whiteSpace: "nowrap",
+                        opacity: active === i ? 1 : 0,
+                        transition: "opacity 0.4s ease 0.15s",
+                      }}>
+                    {art.title}
+                  </h3>
+                  <span
+                    style={{
+                      display: "inline-block", marginTop: "16px", width: "fit-content",
+                      color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase",
+                      border: "1px solid rgba(201,169,110,0.5)", padding: "8px 20px",
+                      opacity: active === i ? 1 : 0,
+                      transition: "opacity 0.4s ease 0.2s",
+                    }}
+                  >
+                    Discover
+                  </span>
+                </div>
+
+                {/* Badge Twin */}
+                {art.isTwin && (
+                  <div className="absolute top-4 right-4"
+                       style={{
+                         background: "rgba(10,10,10,0.6)", border: "1px solid rgba(201,169,110,0.4)",
+                         color: "#C9A96E", fontSize: "8px", letterSpacing: "0.2em",
+                         padding: "4px 10px", textTransform: "uppercase",
+                       }}>
+                    Twin
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* perforation bas */}
+          <div style={perforations} />
+
+          <p className="mt-5 text-center" style={{ color: "#555", fontSize: "10px", letterSpacing: "0.25em", textTransform: "uppercase" }}>
+            Hover to expand · Click to explore
+          </p>
+        </div>
+      ) : (
+        /* ==========================================================
+           MOBILE — Bande défilante (swipe horizontal)
+           ========================================================== */
+        <div>
+          <div
+            className="flex px-6"
+            style={{
+              gap: "12px", overflowX: "auto", scrollSnapType: "x mandatory",
+              paddingBottom: "10px", WebkitOverflowScrolling: "touch",
+            }}
+          >
+            {ARTWORKS.map((art) => (
+              <div
+                key={art.id}
+                onClick={() => openModal(art)}
+                className="relative overflow-hidden"
+                style={{
+                  flex: "0 0 82%", scrollSnapAlign: "center",
+                  aspectRatio: "4/5", background: "#111", cursor: "pointer",
+                }}
+              >
+                <img src={art.images.main} alt={art.title} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 flex flex-col justify-end p-6"
+                     style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 55%)" }}>
+                  <p style={{ color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: "6px" }}>
+                    {art.location}
+                  </p>
+                  <h3 className="font-display" style={{ fontSize: "1.5rem", fontWeight: 300, color: "#fff" }}>
+                    {art.title}
+                  </h3>
+                </div>
+                {art.isTwin && (
+                  <div className="absolute top-4 right-4"
+                       style={{
+                         background: "rgba(10,10,10,0.6)", border: "1px solid rgba(201,169,110,0.4)",
+                         color: "#C9A96E", fontSize: "8px", letterSpacing: "0.2em",
+                         padding: "4px 10px", textTransform: "uppercase",
+                       }}>
+                    Twin
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-center" style={{ color: "#555", fontSize: "10px", letterSpacing: "0.25em", textTransform: "uppercase" }}>
+            Swipe · Tap to explore
+          </p>
+        </div>
+      )}
+
+      {/* ==========================================================
+          MODAL (identique — toggle Original / Twin conservé)
+          ========================================================== */}
       {selected && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -169,7 +258,6 @@ export default function Collection() {
             onClick={(e) => e.stopPropagation()}
             style={{ background: "#111", border: "1px solid rgba(201,169,110,0.1)" }}
           >
-            {/* Modal header */}
             <div className="flex items-center justify-between p-6" style={{ borderBottom: "1px solid rgba(201,169,110,0.1)" }}>
               <div>
                 <p style={{ color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase" }}>{selected.location}</p>
@@ -179,14 +267,12 @@ export default function Collection() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-0">
-              {/* Image */}
               <div className="relative" style={{ aspectRatio: "4/3" }}>
                 <img
                   src={showTwin ? selected.images.twin : selected.images.main}
                   alt={selected.title}
                   className="w-full h-full object-cover"
                 />
-                {/* Twin toggle */}
                 {selected.isTwin && (
                   <div className="absolute bottom-4 left-4 flex gap-2">
                     <button
@@ -215,7 +301,6 @@ export default function Collection() {
                 )}
               </div>
 
-              {/* Info */}
               <div className="p-8 flex flex-col justify-between">
                 <div>
                   <p style={{ color: "#888", lineHeight: 1.8, marginBottom: "32px" }}>{selected.description}</p>
@@ -234,20 +319,14 @@ export default function Collection() {
                   </div>
                 </div>
 
-                {/* CTA */}
                 <div className="mt-8">
-                  <a
+                  
                     href="#contact"
                     onClick={() => setSelected(null)}
                     className="block text-center py-4 transition-all duration-300"
                     style={{
-                      background: "transparent",
-                      border: "1px solid #C9A96E",
-                      color: "#C9A96E",
-                      fontSize: "11px",
-                      letterSpacing: "0.3em",
-                      textTransform: "uppercase",
-                      textDecoration: "none",
+                      background: "transparent", border: "1px solid #C9A96E", color: "#C9A96E",
+                      fontSize: "11px", letterSpacing: "0.3em", textTransform: "uppercase", textDecoration: "none",
                     }}
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLElement).style.background = "#C9A96E";
