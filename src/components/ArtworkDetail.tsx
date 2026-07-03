@@ -20,6 +20,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
   const [showTwin, setShowTwin] = useState(false);
   const [editionIdx, setEditionIdx] = useState(0);
   const [mode, setMode] = useState<"single" | "pair">("single");
+  const [galleryIdx, setGalleryIdx] = useState(0); // index de la galerie in-situ (0 = l'œuvre)
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -39,6 +40,9 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
     return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
   }, [open]);
 
+  /* Galerie in-situ : revenir à l'image de l'œuvre quand la version change */
+  useEffect(() => { setGalleryIdx(0); }, [showTwin, mode]);
+
   const tier = TIERS[tierKey];
   const editions = editionsFor(tierKey);
   const single = editions[editionIdx].price;
@@ -53,6 +57,13 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
   };
 
   const imgSrc = mode === "single" && showTwin ? artwork.images.twin : artwork.images.main;
+
+  /* === GALERIE IN-SITU === image de l'œuvre (réactive aux toggles) + photos de mise en situation */
+  const room = artwork.room ?? [];
+  const gallery = [imgSrc, ...room];              // [0] = l'œuvre, [1..] = in-situ
+  const bigSrc = gallery[galleryIdx] ?? imgSrc;   // image affichée en grand
+  /* === MINI-CARROUSEL === les autres œuvres de la collection */
+  const others = ARTWORKS.filter((a) => a.id !== artwork.id);
   const versionLabel = mode === "pair" ? "Reunited — Original + Chromatic Twin" : showTwin ? "Chromatic Twin" : "Original";
   const priceLabel = onRequest ? "Price on request" : `From CHF ${swiss(price)}`;
 
@@ -85,8 +96,21 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
     <section className="oap-detail">
       {/* IMAGE */}
       <div className="visual">
-        <img src={imgSrc} alt={artwork.title} className="art" />
+        <img key={bigSrc} src={bigSrc} alt={artwork.title} className="art" />
         <span className="caption">{artwork.location}</span>
+
+        {/* Vignettes in-situ — visibles uniquement si l'œuvre a des photos de mise en situation */}
+        {gallery.length > 1 && (
+          <div className="thumbs">
+            {gallery.map((g, i) => (
+              <button key={i} className={"thumb" + (galleryIdx === i ? " on" : "")}
+                onClick={() => setGalleryIdx(i)} aria-label={i === 0 ? "The artwork" : `In-situ ${i}`}>
+                <img src={g} alt="" />
+              </button>
+            ))}
+          </div>
+        )}
+
         <Link href={`/collection/${prevId}`} aria-label="Previous artwork" className="arrow l">‹</Link>
         <Link href={`/collection/${nextId}`} aria-label="Next artwork" className="arrow r">›</Link>
       </div>
@@ -169,6 +193,21 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
             <div><span>Delivery</span><b>Made to order · 10 days</b></div>
           </div>
         </div>
+
+        {/* ===== EXPLORE THE COLLECTION — mini-carrousel des autres œuvres (même mécanique) ===== */}
+        {others.length > 0 && (
+          <div className="more">
+            <p className="more-lbl">Explore the Collection</p>
+            <div className="more-row">
+              {others.map((a) => (
+                <Link key={a.id} href={`/collection/${a.id}`} className="more-tile">
+                  <img src={a.images.main} alt={a.title} />
+                  <span className="more-name">{a.title}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ===== POP-UP FORMULAIRE ===== */}
@@ -245,6 +284,14 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         .visual:hover .arrow{opacity:1; transform:translateY(-50%);}
         .arrow:hover{border-color:var(--goldhair); color:var(--gold);}
 
+        /* Vignettes galerie in-situ */
+        .thumbs{position:absolute; z-index:3; left:50%; transform:translateX(-50%); bottom:clamp(20px,3.5vh,34px);
+          display:flex; gap:10px;}
+        .thumb{width:58px; height:58px; padding:0; overflow:hidden; cursor:pointer; opacity:.7;
+          background:#0b0d11; border:1px solid rgba(255,255,255,.28); transition:opacity .3s, border-color .3s;}
+        .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+        .thumb:hover{opacity:1;} .thumb.on{opacity:1; border-color:var(--goldhair);}
+
         .detail{display:flex; flex-direction:column; justify-content:center;
           padding:clamp(96px,8vh,120px) clamp(32px,4vw,72px) clamp(48px,7vh,80px);}
         .toprow{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:30px;}
@@ -285,6 +332,16 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         .dc-grid span{display:block; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); margin-bottom:6px;}
         .dc-grid b{font-weight:400; font-size:12.5px; color:var(--white); line-height:1.4;}
 
+        /* Mini-carrousel Explore the Collection */
+        .more{margin-top:40px; border-top:1px solid var(--hair); padding-top:30px;}
+        .more-lbl{font-size:9.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--dim); margin-bottom:18px;}
+        .more-row{display:flex; gap:14px; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch;}
+        .more-tile{flex:0 0 auto; width:150px; text-decoration:none;}
+        .more-tile img{width:150px; height:100px; object-fit:cover; display:block; filter:brightness(.72); transition:filter .35s;}
+        .more-tile:hover img{filter:brightness(1);}
+        .more-name{display:block; margin-top:10px; font-size:11px; letter-spacing:.14em; color:var(--grey); transition:color .25s;}
+        .more-tile:hover .more-name{color:var(--white);}
+
         .modal{position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
           padding:24px; background:rgba(6,8,11,0.72); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);}
         .modal-card{position:relative; width:100%; max-width:560px; max-height:90vh; overflow-y:auto;
@@ -312,6 +369,8 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           .toprow{margin-bottom:28px;} .title{font-size:clamp(2rem,9vw,2.8rem);}
           .price{font-size:2.1rem;} .dc-grid{grid-template-columns:repeat(2,1fr);}
           .frow{grid-template-columns:1fr;}
+          .thumb{width:48px; height:48px;}
+          .more-tile{width:130px;} .more-tile img{width:130px; height:86px;}
         }
         @media (max-width:380px){ .editions{gap:16px;} }
       `}</style>
