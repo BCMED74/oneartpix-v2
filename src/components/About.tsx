@@ -1,6 +1,5 @@
 /* ============================================================
-   ABOUT — OneArtPix (registre Porsche)
-   Manta (paysage) à gauche · un peu d'air après le carrousel
+   ABOUT — manta full-size (sans bordure, fond noir) · cadre agrandi
    ============================================================ */
 
 const GOLD = "#C9A96E";
@@ -16,24 +15,20 @@ export default function About() {
         display: "flex",
         justifyContent: "center",
         paddingTop: "clamp(70px, 11vh, 150px)",
-        marginTop: "clamp(8px, 2vh, 32px)",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div
         className="grid md:grid-cols-2 gap-14 md:gap-20 items-center"
         style={{ width: "100%", maxWidth: "1536px" }}
       >
-        {/* Image — MANTA (plus grande) */}
+        {/* Manta — full size, sans bordure, se fond dans le noir */}
         <div className="relative overflow-hidden"
-          style={{ aspectRatio: "16/11", maxHeight: "700px", border: "1px solid rgba(255,255,255,0.08)" }}>
+          style={{ aspectRatio: "16/9", maxHeight: "820px" }}>
           <img
-            src="https://oneartpix.com/wp-content/uploads/2026/05/IMG_1838_MANTA-DOUBLE-TBLX_ONEARTPIX-16-9_V3-gigapixel-standard-v2-2x_WEBP-1536x864.webp"
+            src="https://oneartpix.com/wp-content/uploads/2026/05/IMG_1838_MANTA-DOUBLE-TBLX_ONEARTPIX-16-9_V3-gigapixel-standard-v2-2x_WEBP.webp"
             alt="OneArtPix — Fine Art Photography"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0"
-            style={{ background: "linear-gradient(to top, rgba(14,17,22,0.35) 0%, transparent 55%)" }} />
         </div>
 
         {/* Texte */}
@@ -54,7 +49,7 @@ export default function About() {
             OneArtPix. The work speaks, not the name.
           </p>
 
-          <div className="grid grid-cols-3 gap-8" style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "28px" }}>
+          <div className="grid grid-cols-3 gap-8" style={{ paddingTop: "8px" }}>
             {[
               ["5 + 2 AP", "Per edition"],
               ["Made to order", "10 business days"],
