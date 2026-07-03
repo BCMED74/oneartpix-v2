@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { type Artwork, ARTWORKS, EDITIONS, pairPrice } from "@/data/artworks";
 
@@ -9,7 +9,7 @@ import { type Artwork, ARTWORKS, EDITIONS, pairPrice } from "@/data/artworks";
    • Image plein bord + léger zoom cinématographique (Ken Burns)
    • Flèches ‹ / › sur les bords de l'image au survol
    • Responsive mobile via media queries (empilé, image en tête)
-   • Style scopé au composant via styled-jsx (:hover, @keyframes, @media)
+   • Lecture ?v=twin (ouvre direct sur la version psychédélique)
    ============================================================ */
 
 type Props = { artwork: Artwork; prevId: string; nextId: string };
@@ -22,6 +22,14 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
   const [showTwin, setShowTwin] = useState(false);
   const [editionIdx, setEditionIdx] = useState(0);
   const [mode, setMode] = useState<"single" | "pair">("single");
+
+  /* === Pré-sélection psychédélique si l'URL contient ?v=twin === */
+  useEffect(() => {
+    if (typeof window !== "undefined" && artwork.isTwin) {
+      const v = new URLSearchParams(window.location.search).get("v");
+      if (v === "twin") setShowTwin(true);
+    }
+  }, [artwork.isTwin]);
 
   /* === Prix === */
   const single = EDITIONS[editionIdx].price;
@@ -122,7 +130,6 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
 
       {/* ===================== STYLE (scopé) ===================== */}
       <style jsx>{`
-        /* --- charte --- */
         .oap-detail{
           --white:#F4F2ED; --grey:#9a9892; --dim:#6b6a65;
           --gold:#C9A96E; --hair:rgba(255,255,255,.09); --goldhair:rgba(201,169,110,.55);
@@ -131,8 +138,6 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           letter-spacing:-.01em;
         }
         .eyebrow{font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:var(--dim); font-weight:400;}
-
-        /* --- image cinématographique --- */
         .visual{position:relative; overflow:hidden; background:#0b0d11;}
         .art{width:100%; height:100%; min-height:100vh; object-fit:cover; display:block;
              transform:scale(1.04); animation:kenburns 28s ease-out forwards;}
@@ -153,8 +158,6 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         .arrow.r{right:20px; transform:translateY(-50%) translateX(6px);}
         .visual:hover .arrow{opacity:1; transform:translateY(-50%);}
         .arrow:hover{border-color:var(--goldhair); color:var(--gold);}
-
-        /* --- panneau détails --- */
         .detail{display:flex; flex-direction:column; justify-content:center;
           padding:clamp(96px,8vh,120px) clamp(32px,4vw,72px) clamp(48px,7vh,80px);}
         .toprow{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:38px;}
@@ -162,44 +165,35 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         .back:hover{color:var(--white);}
         .index{font-size:10.5px; letter-spacing:.26em; color:var(--dim);}
         .index b{color:var(--white); font-weight:500;}
-
         .kicker{font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:var(--gold); margin-bottom:18px;}
         .title{font-weight:300; font-size:clamp(2rem,3.8vw,3.5rem); line-height:1.04; letter-spacing:-.02em; margin-bottom:20px;}
         .lede{color:var(--grey); font-weight:300; line-height:1.85; font-size:15px; max-width:42ch; margin-bottom:0;}
         .rule{height:1px; background:var(--hair); margin:36px 0;}
-
         .lbl{font-size:9.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--dim); margin-bottom:16px;}
-
         .editions{display:flex; flex-wrap:wrap; gap:24px; margin-bottom:34px;}
         .ed{background:none; border:none; cursor:pointer; color:var(--dim); font-family:inherit; font-weight:400;
           font-size:13px; letter-spacing:.04em; padding:0 0 8px; border-bottom:1px solid transparent; transition:.25s;}
         .ed:hover{color:var(--grey);}
         .ed.on{color:var(--white); border-bottom-color:var(--goldhair);}
-
         .toggle{display:flex; flex-wrap:wrap; gap:24px; margin-bottom:34px;}
         .toggle button{background:none; border:none; cursor:pointer; color:var(--dim); font-family:inherit; font-weight:400;
           font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; padding:0 0 8px;
           border-bottom:1px solid transparent; transition:.25s;}
         .toggle button:hover{color:var(--grey);}
         .toggle button.on{color:var(--white); border-bottom-color:var(--goldhair);}
-
         .price-wrap{margin-bottom:30px;}
         .price{font-weight:300; font-size:2.6rem; line-height:1; margin-top:8px; letter-spacing:-.01em;}
         .price small{font-size:.95rem; color:var(--grey); letter-spacing:.08em; margin-left:8px; font-weight:400;}
-
         .cta{display:flex; align-items:center; justify-content:center; gap:12px; background:var(--white); color:#0E1116;
           font-size:10.5px; letter-spacing:.26em; text-transform:uppercase; font-weight:500; padding:18px;
           text-decoration:none; transition:background .3s;}
         .cta:hover{background:var(--gold);}
         .cta i{font-style:normal; transition:transform .3s;}
         .cta:hover i{transform:translateX(4px);}
-
         .meta{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px;
           border-top:1px solid var(--hair); padding-top:24px;}
         .meta b{font-weight:400; font-size:.95rem; color:var(--white);}
         .meta span{display:block; font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin-top:4px;}
-
-        /* ===================== MOBILE ===================== */
         @media (max-width:900px){
           .oap-detail{grid-template-columns:1fr;}
           .art{min-height:60vh; height:60vh;}
