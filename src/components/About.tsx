@@ -1,6 +1,6 @@
 /* ============================================================
    ABOUT — OneArtPix (registre Porsche)
-   Centrage FLEX (increvable) · image manta (paysage) + texte
+   Manta (paysage) à gauche · un peu d'air après le carrousel
    ============================================================ */
 
 const GOLD = "#C9A96E";
@@ -10,16 +10,23 @@ export default function About() {
   return (
     <section
       id="about"
-      className="py-24 md:py-32 px-6 md:px-12"
-      style={{ background: "#0E1116", borderTop: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "center" }}
+      className="pb-24 md:pb-32 px-6 md:px-12"
+      style={{
+        background: "#0E1116",
+        display: "flex",
+        justifyContent: "center",
+        paddingTop: "clamp(70px, 11vh, 150px)",
+        marginTop: "clamp(8px, 2vh, 32px)",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+      }}
     >
       <div
         className="grid md:grid-cols-2 gap-14 md:gap-20 items-center"
         style={{ width: "100%", maxWidth: "1536px" }}
       >
-        {/* Image — MANTA (paysage 16:9) */}
+        {/* Image — MANTA (plus grande) */}
         <div className="relative overflow-hidden"
-          style={{ aspectRatio: "16/10", maxHeight: "560px", border: "1px solid rgba(255,255,255,0.08)" }}>
+          style={{ aspectRatio: "16/11", maxHeight: "700px", border: "1px solid rgba(255,255,255,0.08)" }}>
           <img
             src="https://oneartpix.com/wp-content/uploads/2026/05/IMG_1838_MANTA-DOUBLE-TBLX_ONEARTPIX-16-9_V3-gigapixel-standard-v2-2x_WEBP-1536x864.webp"
             alt="OneArtPix — Fine Art Photography"
