@@ -2,17 +2,17 @@
 import { useEffect, useState } from "react";
 
 /* ============================================================
-   NAVIGATION — bande fine · logo XXL À CHEVAL (déborde sur la photo)
-   Liens en ancres <a> → scroll fiable vers les sections
+   NAVIGATION — bande fine · logo XXL à cheval · liens /#… (scroll)
+   Pas de bordure (aucune ligne ne traverse le logo)
    ============================================================ */
 
 const LEFT = [
-  { label: "Collection", href: "#collection" },
-  { label: "The Twins", href: "#collection" },
+  { label: "Collection", href: "/#collection" },
+  { label: "The Twins", href: "/#collection" },
 ];
 const RIGHT = [
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "About", href: "/#about" },
+  { label: "Contact", href: "/#contact" },
 ];
 const ALL = [...LEFT, ...RIGHT];
 const GOLD = "#C9A96E";
@@ -38,13 +38,12 @@ export default function Navigation() {
     <nav
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       style={{
-        overflow: "visible", position: "fixed",
+        overflow: "visible",
         background: scrolled
-          ? "rgba(14,17,22,0.95)"
-          : "linear-gradient(to bottom, rgba(14,17,22,0.68) 0%, transparent 100%)",
+          ? "rgba(14,17,22,0.92)"
+          : "linear-gradient(to bottom, rgba(14,17,22,0.66) 0%, transparent 100%)",
         backdropFilter: scrolled ? "blur(18px)" : "none",
         WebkitBackdropFilter: scrolled ? "blur(18px)" : "none",
-        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.07)" : "1px solid transparent",
       }}
     >
       <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
@@ -57,32 +56,26 @@ export default function Navigation() {
             paddingTop: "9px", paddingBottom: "9px", minHeight: "44px",
           }}
         >
-          {/* GAUCHE — liens */}
           <div className="hidden md:flex" style={{ gap: "34px", justifyContent: "flex-start" }}>
             {LEFT.map((item) => (
-              <a key={item.label} href={item.href} style={linkStyle}
-                onClick={() => setOpen(false)}
+              <a key={item.label} href={item.href} style={linkStyle} onClick={() => setOpen(false)}
                 onMouseEnter={(e) => hov(e, true)} onMouseLeave={(e) => hov(e, false)}>
                 {item.label}
               </a>
             ))}
           </div>
 
-          {/* CENTRE — placeholder (le logo est en absolu, à cheval) */}
           <span aria-hidden style={{ display: "block", width: "1px" }} />
 
-          {/* DROITE — liens */}
           <div className="hidden md:flex" style={{ gap: "34px", justifyContent: "flex-end" }}>
             {RIGHT.map((item) => (
-              <a key={item.label} href={item.href} style={linkStyle}
-                onClick={() => setOpen(false)}
+              <a key={item.label} href={item.href} style={linkStyle} onClick={() => setOpen(false)}
                 onMouseEnter={(e) => hov(e, true)} onMouseLeave={(e) => hov(e, false)}>
                 {item.label}
               </a>
             ))}
           </div>
 
-          {/* DROITE — hamburger (mobile) */}
           <button className="md:hidden flex flex-col" aria-label="Menu" onClick={() => setOpen((o) => !o)}
             style={{ justifySelf: "end", gridColumn: "3", gap: "5px", background: "none", border: "none", cursor: "pointer", padding: "6px" }}>
             <span style={{ display: "block", width: "22px", height: "1.5px", background: "#F4F2ED", transition: "transform .3s", transform: open ? "translateY(6.5px) rotate(45deg)" : "none" }} />
@@ -90,7 +83,6 @@ export default function Navigation() {
             <span style={{ display: "block", width: "22px", height: "1.5px", background: "#F4F2ED", transition: "transform .3s", transform: open ? "translateY(-6.5px) rotate(-45deg)" : "none" }} />
           </button>
 
-          {/* LOGO — absolu, centré, à cheval sur la bande et la photo */}
           <a href="/" onClick={() => setOpen(false)} aria-label="OneArtPix — home"
             style={{ position: "absolute", left: "50%", top: "6px", transform: "translateX(-50%)", display: "block", lineHeight: 0 }}>
             <img src="/oneartpix-logo-gold.png" alt="OneArtPix"
@@ -99,7 +91,6 @@ export default function Navigation() {
         </div>
       </div>
 
-      {/* PANNEAU MOBILE */}
       <div className="md:hidden"
         style={{ overflow: "hidden", maxHeight: open ? "320px" : "0px",
           transition: "max-height .45s cubic-bezier(0.4,0,0.2,1)",
