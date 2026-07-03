@@ -1,6 +1,6 @@
 /* ============================================================
    ABOUT — OneArtPix (registre Porsche)
-   Centrage FLEX (increvable) · image portrait + texte
+   Centrage FLEX (increvable) · image manta (paysage) + texte
    ============================================================ */
 
 const GOLD = "#C9A96E";
@@ -17,11 +17,11 @@ export default function About() {
         className="grid md:grid-cols-2 gap-14 md:gap-20 items-center"
         style={{ width: "100%", maxWidth: "1536px" }}
       >
-        {/* Image */}
+        {/* Image — MANTA (paysage 16:9) */}
         <div className="relative overflow-hidden"
-          style={{ aspectRatio: "4/5", maxHeight: "640px", border: "1px solid rgba(255,255,255,0.08)" }}>
+          style={{ aspectRatio: "16/10", maxHeight: "560px", border: "1px solid rgba(255,255,255,0.08)" }}>
           <img
-            src="https://oneartpix.com/wp-content/uploads/2026/04/DSC04290_TOPAZ_ED_V3_TIFF_PRINT-BARYTA-WEBP.webp"
+            src="https://oneartpix.com/wp-content/uploads/2026/05/IMG_1838_MANTA-DOUBLE-TBLX_ONEARTPIX-16-9_V3-gigapixel-standard-v2-2x_WEBP-1536x864.webp"
             alt="OneArtPix — Fine Art Photography"
             className="w-full h-full object-cover"
           />
