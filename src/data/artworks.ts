@@ -1,6 +1,7 @@
 /* ============================================================
    DONNÉES PARTAGÉES — OneArtPix
    Utilisé par le carrousel (Collection) ET les pages produit
+   Lexique verrouillé : Original · Chromatic Twin · Reunited
    ============================================================ */
 
 export type Artwork = {
@@ -12,9 +13,12 @@ export type Artwork = {
   isTwin: boolean;
   images: { main: string; twin: string };
   description: string;
+  tier: string;       // Prestige / Collector
+  format: string;     // long edge
+  material: string;   // Acrylic-plexi / Baryta on Dibond
 };
 
-/* === Tarifs par numéro d'édition === */
+/* === Tarifs par numéro d'édition (prix "From") === */
 export const EDITIONS = [
   { label: "1/5", price: 1200 },
   { label: "2/5", price: 1800 },
@@ -23,16 +27,12 @@ export const EDITIONS = [
   { label: "5/5", price: 8000 },
 ];
 
-/* === Remise pour la paire complète (Original + Twin) === */
-export const TWIN_DISCOUNT = 0.2; // -20%
-
-/* === Prix formaté façon suisse : 1200 -> "1'200 CHF" === */
+/* === Prix formaté façon suisse : 1200 -> "1'200" === */
 export const formatCHF = (n: number) =>
-  n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'") + " CHF";
+  n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
 
-/* === Prix de la paire complète pour une édition donnée === */
-export const pairPrice = (single: number) =>
-  Math.round(single * 2 * (1 - TWIN_DISCOUNT));
+/* === Reunited = SOMME des deux visions (aucune remise) === */
+export const pairPrice = (single: number) => single * 2;
 
 /* === Catalogue === */
 export const ARTWORKS: Artwork[] = [
@@ -49,6 +49,9 @@ export const ARTWORKS: Artwork[] = [
     },
     description:
       "Ancient tropical forest at the foot of Kilimanjaro. A moment suspended between earth and sky.",
+    tier: "Prestige",
+    format: "70 – 120 cm · long edge",
+    material: "Acrylic-plexi / Baryta on Dibond",
   },
   {
     id: "the-crossing",
@@ -63,6 +66,9 @@ export const ARTWORKS: Artwork[] = [
     },
     description:
       "A stolen moment at lunchtime. A lone foilboarder defying gravity between water and sky.",
+    tier: "Prestige",
+    format: "70 – 120 cm · long edge",
+    material: "Acrylic-plexi / Baryta on Dibond",
   },
   {
     id: "i-see-you",
@@ -77,6 +83,9 @@ export const ARTWORKS: Artwork[] = [
     },
     description:
       "The oldest glacier in the Alps — slowly disappearing. A window into something ancient and indifferent.",
+    tier: "Prestige",
+    format: "70 – 120 cm · long edge",
+    material: "Acrylic-plexi / Baryta on Dibond",
   },
 ];
 
