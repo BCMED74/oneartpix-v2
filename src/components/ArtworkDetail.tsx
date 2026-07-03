@@ -6,8 +6,9 @@ import { type Artwork, ARTWORKS, TIERS, type TierKey, editionsFor, pairPrice } f
 /* ============================================================
    ARTWORK DETAIL — fiche produit (lexique + 2 tiers verrouillés)
    • Tier EN PREMIER : Prestige (5+2 AP) / Collector (10+2 AP)
+   • Unique Piece — One copy in the world.
    • Original / Chromatic Twin · Reunited = somme (aucune remise)
-   • Prix "From" · bandeau Certificate + Blockchain (Verisart)
+   • Prix "From" · deux bandeaux (Prestige + Collector) Verisart
    • The Absolute Piece (édition entière → 1/1)
    ============================================================ */
 
@@ -96,6 +97,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           {tierOption("prestige")}
           {tierOption("collector")}
         </div>
+        <p className="unique">Unique Piece — One copy in the world.</p>
 
         {/* Édition */}
         <p className="lbl">Edition</p>
@@ -143,12 +145,24 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           The Absolute Piece — acquire the full edition · 1/1 · price on request <i>→</i>
         </a>
 
-        {/* Bandeau */}
-        <div className="meta">
-          <div><b>{tier.editions}</b><span>Edition</span></div>
-          <div><b>Signed</b><span>Numbered</span></div>
-          <div><b>Certificate</b><span>Blockchain · Verisart</span></div>
-          <div><b>10 days</b><span>Made to order</span></div>
+        {/* Bandeaux — un par tier */}
+        <div className="banner">
+          <p className="b-tier">Prestige Edition</p>
+          <div className="meta">
+            <div><b>5 + 2 AP</b><span>Edition</span></div>
+            <div><b>Signed</b><span>Numbered</span></div>
+            <div><b>Certificate</b><span>Blockchain · Verisart</span></div>
+            <div><b>10 days</b><span>Made to order</span></div>
+          </div>
+        </div>
+        <div className="banner">
+          <p className="b-tier">Collector Edition</p>
+          <div className="meta">
+            <div><b>10 + 2 AP</b><span>Edition</span></div>
+            <div><b>Signed</b><span>Numbered</span></div>
+            <div><b>Certificate</b><span>Blockchain · Verisart</span></div>
+            <div><b>10 days</b><span>Made to order</span></div>
+          </div>
         </div>
       </div>
 
@@ -194,7 +208,8 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         .rule{height:1px; background:var(--hair); margin:30px 0;}
         .lbl{font-size:9.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--dim); margin-bottom:14px;}
 
-        .tiers{display:flex; flex-direction:column; gap:10px; margin-bottom:32px;}
+        .tiers{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
+        .unique{color:var(--white); font-weight:400; font-size:12px; letter-spacing:.05em; margin:0 0 30px;}
         .tier{display:flex; flex-direction:column; align-items:flex-start; gap:5px; text-align:left; cursor:pointer;
           background:rgba(255,255,255,0.015); border:1px solid var(--hair); border-left:2px solid transparent;
           padding:15px 18px; transition:.25s; font-family:inherit;}
@@ -225,12 +240,14 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           text-decoration:none; transition:background .3s;}
         .cta:hover{background:var(--gold);} .cta i{font-style:normal; transition:transform .3s;} .cta:hover i{transform:translateX(4px);}
 
-.abs-piece{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px;
+        .abs-piece{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px;
           color:var(--dim); font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; text-decoration:none; transition:color .3s;}
         .abs-piece:hover{color:var(--gold);} .abs-piece i{font-style:normal;}
 
-        .meta{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:34px;
-          border-top:1px solid var(--hair); padding-top:24px;}
+        .banner{border-top:1px solid var(--hair); padding-top:22px; margin-top:26px;}
+        .banner + .banner{margin-top:20px;}
+        .b-tier{color:var(--gold); font-size:10px; letter-spacing:.24em; text-transform:uppercase; margin-bottom:16px;}
+        .meta{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
         .meta b{font-weight:400; font-size:.9rem; color:var(--white);}
         .meta span{display:block; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-top:4px;}
 
