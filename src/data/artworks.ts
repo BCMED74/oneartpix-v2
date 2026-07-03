@@ -12,6 +12,7 @@ export type Artwork = {
   editions: string;
   isTwin: boolean;
   images: { main: string; twin: string };
+  room?: string[];              // photos de mise en situation (in-situ) — optionnel
   description: string;
 };
 
@@ -121,6 +122,37 @@ export const ARTWORKS: Artwork[] = [
     },
     description:
       "The oldest glacier in the Alps — slowly disappearing. A window into something ancient and indifferent.",
+  },
+
+  /* ===== NOUVELLES ŒUVRES — Lac Léman ===== */
+  /* Titres & textes = provisoires (classe, à affiner par Brice) */
+  {
+    id: "passage",
+    title: "Passage",
+    location: "Lake Geneva · Switzerland",
+    year: "2025",
+    editions: "5 + 2 AP",
+    isTwin: true,
+    images: {
+      main: "/ONEARTPIX_OLI04528_ED_WEBP__from_PNG_.webp",
+      twin: "/ONEARTPIX_OLI04528_ED_CHROMATIC_WEBP__from_PNG_.webp",
+    },
+    description:
+      "A lone sailboat drifts through the morning haze of Lake Geneva. Stillness carried by the faintest breath of wind.",
+  },
+  {
+    id: "the-threshold",
+    title: "The Threshold",
+    location: "Lake Geneva · Switzerland",
+    year: "2025",
+    editions: "5 + 2 AP",
+    isTwin: true,
+    images: {
+      main: "/ONEARTPIX_OLI04576_ED_WEBP__fromPNG_.webp",
+      twin: "/ONEARTPIX_OLI04576_ED_CHROMATIC_WEBP__FROM_png_.webp",
+    },
+    description:
+      "A weathered pontoon and its ladder, poised at the edge of still water. The quiet line where the lake begins.",
   },
 ];
 
