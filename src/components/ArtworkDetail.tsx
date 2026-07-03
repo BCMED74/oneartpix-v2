@@ -1,15 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { type Artwork, ARTWORKS, EDITIONS, pairPrice } from "@/data/artworks";
+import { type Artwork, ARTWORKS, TIERS, type TierKey, editionsFor, pairPrice } from "@/data/artworks";
 
 /* ============================================================
-   ARTWORK DETAIL — fiche produit (registre Porsche + lexique verrouillé)
-   • Original / Chromatic Twin  ·  Reunited = somme (aucune remise)
-   • Prix préfixé "From"  ·  ligne Tier · Format · Material
-   • Bandeau Certificate + Blockchain (Verisart)
-   • Reunited sélectionné → sélecteur Version masqué
-   • The Absolute Piece (acquisition de l'édition entière → 1/1)
+   ARTWORK DETAIL — fiche produit (lexique + 2 tiers verrouillés)
+   • Tier EN PREMIER : Prestige (5+2 AP) / Collector (10+2 AP)
+   • Original / Chromatic Twin · Reunited = somme (aucune remise)
+   • Prix "From" · bandeau Certificate + Blockchain (Verisart)
+   • The Absolute Piece (édition entière → 1/1)
    ============================================================ */
 
 type Props = { artwork: Artwork; prevId: string; nextId: string };
@@ -17,44 +16,56 @@ type Props = { artwork: Artwork; prevId: string; nextId: string };
 const swiss = (n: number) => new Intl.NumberFormat("de-CH").format(Math.round(n));
 
 export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
+  const [tierKey, setTierKey] = useState<TierKey>("prestige");
   const [showTwin, setShowTwin] = useState(false);
   const [editionIdx, setEditionIdx] = useState(0);
   const [mode, setMode] = useState<"single" | "pair">("single");
 
-  /* Pré-sélection Chromatic Twin via ?v=twin */
   useEffect(() => {
     if (typeof window !== "undefined" && artwork.isTwin) {
       if (new URLSearchParams(window.location.search).get("v") === "twin") setShowTwin(true);
     }
   }, [artwork.isTwin]);
 
-  const single = EDITIONS[editionIdx].price;
+  const tier = TIERS[tierKey];
+  const editions = editionsFor(tierKey);
+  const single = editions[editionIdx].price;
   const price = mode === "pair" ? pairPrice(single) : single;
   const idx = Math.max(0, ARTWORKS.findIndex((a) => a.id === artwork.id));
   const pad = (n: number) => String(n).padStart(2, "0");
 
-  /* Image affichée : Reunited → Original */
+  const pickTier = (k: TierKey) => { setTierKey(k); setEditionIdx(0); };
+
   const imgSrc = mode === "single" && showTwin ? artwork.images.twin : artwork.images.main;
 
-  /* Email pré-rempli */
-  const subject = `OneArtPix — ${artwork.title} · Edition ${EDITIONS[editionIdx].label}`;
+  const subject = `OneArtPix — ${artwork.title} · ${tier.name} · Edition ${editions[editionIdx].label}`;
   const body =
     `Hello,\n\nI'm interested in the following piece:\n\n` +
     `• Artwork: ${artwork.title} (${artwork.location})\n` +
-    `• Edition: ${EDITIONS[editionIdx].label}\n` +
+    `• Tier: ${tier.name} — ${tier.editions} · ${tier.format} · ${tier.material}\n` +
+    `• Edition: ${editions[editionIdx].label}\n` +
     `• Version: ${mode === "pair" ? "Reunited — Original + Chromatic Twin" : showTwin ? "Chromatic Twin" : "Original"}\n` +
-    `• Tier: ${artwork.tier} · ${artwork.material}\n` +
     `• From: CHF ${swiss(price)}\n\n` +
     `Could you please tell me more about availability?\n\nThank you.`;
   const mailto = `mailto:info@oneartpix.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-  /* Email — The Absolute Piece */
   const absoluteBody =
     `Hello,\n\nI would like to enquire about acquiring the complete edition of ` +
     `"${artwork.title}" — The Absolute Piece (1/1).\n\nThank you.`;
   const absoluteMailto = `mailto:info@oneartpix.com?subject=${encodeURIComponent(
     `OneArtPix — The Absolute Piece · ${artwork.title}`
   )}&body=${encodeURIComponent(absoluteBody)}`;
+
+  const tierOption = (k: TierKey) => {
+    const t = TIERS[k];
+    const on = tierKey === k;
+    return (
+      <button key={k} className={"tier" + (on ? " on" : "")} onClick={() => pickTier(k)}>
+        <span className="tier-name">{t.name}</span>
+        <span className="tier-spec">{t.editions} · {t.format} · {t.material}</span>
+      </button>
+    );
+  };
 
   return (
     <section className="oap-detail">
@@ -79,10 +90,17 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
 
         <div className="rule" />
 
+        {/* TIER — en premier */}
+        <p className="lbl">Edition Tier</p>
+        <div className="tiers">
+          {tierOption("prestige")}
+          {tierOption("collector")}
+        </div>
+
         {/* Édition */}
         <p className="lbl">Edition</p>
         <div className="editions">
-          {EDITIONS.map((ed, i) => (
+          {editions.map((ed, i) => (
             <button key={ed.label} className={"ed" + (editionIdx === i ? " on" : "")} onClick={() => setEditionIdx(i)}>
               {ed.label.replace("/", " / ")}
             </button>
@@ -111,13 +129,6 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           </>
         )}
 
-        {/* Tier · Format · Material */}
-        <div className="specs">
-          <div><span>Tier</span><b>{artwork.tier}</b></div>
-          <div><span>Format</span><b>{artwork.format}</b></div>
-          <div><span>Material</span><b>{artwork.material}</b></div>
-        </div>
-
         {/* Prix (From) */}
         <div className="price-wrap">
           <p className="eyebrow">{mode === "pair" ? "Reunited — the complete work" : "This print"}</p>
@@ -128,13 +139,13 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         <a href={mailto} className="cta">Inquire about this piece <i>→</i></a>
 
         {/* The Absolute Piece */}
-        <a href={absoluteMailto} className="absolute">
+        <a href={absoluteMailto} className="abs-piece">
           The Absolute Piece — acquire the full edition · 1/1 · price on request <i>→</i>
         </a>
 
         {/* Bandeau */}
         <div className="meta">
-          <div><b>{artwork.editions}</b><span>Edition</span></div>
+          <div><b>{tier.editions}</b><span>Edition</span></div>
           <div><b>Signed</b><span>Numbered</span></div>
           <div><b>Certificate</b><span>Blockchain · Verisart</span></div>
           <div><b>10 days</b><span>Made to order</span></div>
@@ -172,7 +183,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
 
         .detail{display:flex; flex-direction:column; justify-content:center;
           padding:clamp(96px,8vh,120px) clamp(32px,4vw,72px) clamp(48px,7vh,80px);}
-        .toprow{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:34px;}
+        .toprow{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:32px;}
         .back{font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--grey); text-decoration:none;}
         .back:hover{color:var(--white);}
         .index{font-size:10.5px; letter-spacing:.26em; color:var(--dim);}
@@ -180,26 +191,31 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         .kicker{font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:var(--gold); margin-bottom:16px;}
         .title{font-weight:300; font-size:clamp(2rem,3.6vw,3.3rem); line-height:1.04; letter-spacing:-.02em; margin-bottom:18px;}
         .lede{color:var(--grey); font-weight:300; line-height:1.8; font-size:15px; max-width:44ch; margin-bottom:0;}
-        .rule{height:1px; background:var(--hair); margin:32px 0;}
+        .rule{height:1px; background:var(--hair); margin:30px 0;}
         .lbl{font-size:9.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--dim); margin-bottom:14px;}
 
-        .editions{display:flex; flex-wrap:wrap; gap:24px; margin-bottom:30px;}
+        .tiers{display:flex; flex-direction:column; gap:10px; margin-bottom:32px;}
+        .tier{display:flex; flex-direction:column; align-items:flex-start; gap:5px; text-align:left; cursor:pointer;
+          background:rgba(255,255,255,0.015); border:1px solid var(--hair); border-left:2px solid transparent;
+          padding:15px 18px; transition:.25s; font-family:inherit;}
+        .tier:hover{border-color:rgba(201,169,110,0.3);}
+        .tier.on{border-color:var(--goldhair); border-left:2px solid var(--gold); background:rgba(201,169,110,0.05);}
+        .tier-name{font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--white);}
+        .tier.on .tier-name{color:var(--gold);}
+        .tier-spec{font-size:11px; letter-spacing:.02em; color:var(--dim);}
+
+        .editions{display:flex; flex-wrap:wrap; gap:20px; margin-bottom:28px;}
         .ed{background:none; border:none; cursor:pointer; color:var(--dim); font-family:inherit; font-weight:400;
           font-size:13px; letter-spacing:.04em; padding:0 0 8px; border-bottom:1px solid transparent; transition:.25s;}
         .ed:hover{color:var(--grey);} .ed.on{color:var(--white); border-bottom-color:var(--goldhair);}
 
-        .toggle{display:flex; flex-wrap:wrap; gap:24px; margin-bottom:30px;}
+        .toggle{display:flex; flex-wrap:wrap; gap:24px; margin-bottom:28px;}
         .toggle button{background:none; border:none; cursor:pointer; color:var(--dim); font-family:inherit; font-weight:400;
           font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; padding:0 0 8px;
           border-bottom:1px solid transparent; transition:.25s;}
         .toggle button:hover{color:var(--grey);} .toggle button.on{color:var(--white); border-bottom-color:var(--goldhair);}
 
-        .specs{display:flex; flex-wrap:wrap; gap:14px 40px; margin:6px 0 30px; padding:18px 0;
-          border-top:1px solid var(--hair); border-bottom:1px solid var(--hair);}
-        .specs span{display:block; font-size:9px; letter-spacing:.26em; text-transform:uppercase; color:var(--dim); margin-bottom:5px;}
-        .specs b{font-weight:400; font-size:12.5px; color:var(--white); letter-spacing:.02em;}
-
-        .price-wrap{margin-bottom:26px;}
+        .price-wrap{margin-bottom:26px; padding-top:6px;}
         .price{font-weight:300; font-size:2.5rem; line-height:1; margin-top:8px; letter-spacing:-.01em; color:var(--white);}
         .price .from{font-size:.85rem; color:var(--gold); letter-spacing:.14em; text-transform:uppercase; margin-right:8px; vertical-align:middle;}
         .price small{font-size:.9rem; color:var(--grey); letter-spacing:.08em; margin-left:8px; font-weight:400;}
@@ -208,27 +224,3 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           font-size:10.5px; letter-spacing:.26em; text-transform:uppercase; font-weight:500; padding:18px;
           text-decoration:none; transition:background .3s;}
         .cta:hover{background:var(--gold);} .cta i{font-style:normal; transition:transform .3s;} .cta:hover i{transform:translateX(4px);}
-
-        .absolute{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px;
-          color:var(--dim); font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; text-decoration:none; transition:color .3s;}
-        .absolute:hover{color:var(--gold);} .absolute i{font-style:normal;}
-
-        .meta{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:36px;
-          border-top:1px solid var(--hair); padding-top:24px;}
-        .meta b{font-weight:400; font-size:.9rem; color:var(--white);}
-        .meta span{display:block; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-top:4px;}
-
-        @media (max-width:900px){
-          .oap-detail{grid-template-columns:1fr;}
-          .art{min-height:60vh; height:60vh;}
-          .arrow{opacity:.92; transform:translateY(-50%); width:44px; height:44px; font-size:18px;}
-          .arrow.l{transform:translateY(-50%);} .arrow.r{transform:translateY(-50%);}
-          .detail{padding:36px 24px 56px; justify-content:flex-start;}
-          .toprow{margin-bottom:28px;} .title{font-size:clamp(2rem,9vw,2.8rem);}
-          .price{font-size:2.1rem;} .meta{grid-template-columns:repeat(2,1fr); gap:20px 16px;}
-        }
-        @media (max-width:380px){ .editions{gap:18px;} }
-      `}</style>
-    </section>
-  );
-}
