@@ -5,16 +5,15 @@ import { type Artwork, ARTWORKS, TIERS, type TierKey, editionsFor, pairPrice } f
 
 /* ============================================================
    ARTWORK DETAIL — fiche produit
-   • 3 tiers cliquables : Prestige / Collector / Unique Piece
-   • Inquire → formulaire en POP-UP (pré-rempli + commentaire, email)
-   • Bandeaux détaillés (taille + support) pour les 3 tiers
-   • Unique = 1/1, prix sur demande · Reunited masqué
+   • Edition Tier = 3 onglets (Prestige / Collector / Unique)
+   • Détail du tier choisi = bloc épuré SOUS "Inquire"
+   • Inquire → formulaire en POP-UP (pré-rempli + message, email)
    ============================================================ */
 
 type Props = { artwork: Artwork; prevId: string; nextId: string };
 
 const swiss = (n: number) => new Intl.NumberFormat("de-CH").format(Math.round(n));
-const GOLD = "#C9A96E", WHITE = "#F4F2ED";
+const WHITE = "#F4F2ED";
 
 export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
   const [tierKey, setTierKey] = useState<TierKey>("prestige");
@@ -76,31 +75,6 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
     setSending(false); setSent(true);
   };
 
-  const tierOption = (k: TierKey) => {
-    const t = TIERS[k]; const on = tierKey === k;
-    return (
-      <button key={k} className={"tier" + (on ? " on" : "")} onClick={() => pickTier(k)}>
-        <span className="tier-name">{t.name}</span>
-        <span className="tier-spec">{t.editions} · {t.format} · {t.material}</span>
-      </button>
-    );
-  };
-
-  const banner = (k: TierKey) => {
-    const t = TIERS[k];
-    return (
-      <div className="banner" key={k}>
-        <p className="b-tier">{t.name}</p>
-        <div className="bgrid">
-          <div><b>{t.editions}</b><span>Edition</span></div>
-          <div><b>{t.format}</b><span>Size</span></div>
-          <div><b>{t.material}</b><span>Support</span></div>
-          <div><b>Verisart</b><span>Certificate · Blockchain</span></div>
-        </div>
-      </div>
-    );
-  };
-
   const field: React.CSSProperties = {
     width: "100%", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.14)",
     borderRadius: 0, padding: "13px 15px", color: WHITE, fontSize: "14px", outline: "none", fontFamily: "inherit",
@@ -128,13 +102,15 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         <h1 className="title">{artwork.title}</h1>
         <p className="lede">{artwork.description}</p>
 
+        {/* Edition Tier — 3 onglets */}
         <p className="lbl">Edition Tier</p>
-        <div className="tiers">
-          {tierOption("prestige")}
-          {tierOption("collector")}
-          {tierOption("unique")}
+        <div className="toggle">
+          <button className={tierKey === "prestige" ? "on" : ""} onClick={() => pickTier("prestige")}>Prestige Edition</button>
+          <button className={tierKey === "collector" ? "on" : ""} onClick={() => pickTier("collector")}>Collector Edition</button>
+          <button className={tierKey === "unique" ? "on" : ""} onClick={() => pickTier("unique")}>Unique Piece</button>
         </div>
 
+        {/* Édition */}
         <p className="lbl">Edition</p>
         <div className="editions">
           {editions.map((ed, i) => (
@@ -144,6 +120,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           ))}
         </div>
 
+        {/* Version */}
         {artwork.isTwin && mode === "single" && (
           <>
             <p className="lbl">Version</p>
@@ -154,6 +131,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           </>
         )}
 
+        {/* Présentation — masqué pour Unique */}
         {artwork.isTwin && tierKey !== "unique" && (
           <>
             <p className="lbl">Presentation</p>
@@ -164,6 +142,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           </>
         )}
 
+        {/* Prix */}
         <div className="price-wrap">
           <p className="eyebrow">{mode === "pair" ? "Reunited — the complete work" : "This piece"}</p>
           {onRequest ? (
@@ -173,13 +152,23 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           )}
         </div>
 
+        {/* CTA */}
         <button className="cta" onClick={() => { setSent(false); setOpen(true); }}>
           Inquire about this piece <i>→</i>
         </button>
 
-        {banner("prestige")}
-        {banner("collector")}
-        {banner("unique")}
+        {/* Détail du tier choisi — épuré */}
+        <div className="detail-card">
+          <p className="dc-name">{tier.name}</p>
+          <div className="dc-grid">
+            <div><span>Edition</span><b>{tier.editions}</b></div>
+            <div><span>Size</span><b>{tier.format}</b></div>
+            <div><span>Support</span><b>{tier.material}</b></div>
+            <div><span>Signature</span><b>Signed &amp; numbered</b></div>
+            <div><span>Certificate</span><b>Blockchain · Verisart</b></div>
+            <div><span>Delivery</span><b>Made to order · 10 days</b></div>
+          </div>
+        </div>
       </div>
 
       {/* ===== POP-UP FORMULAIRE ===== */}
@@ -268,16 +257,6 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         .lede{color:var(--grey); font-weight:300; line-height:1.8; font-size:15px; max-width:44ch; margin-bottom:40px;}
         .lbl{font-size:9.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--dim); margin-bottom:14px;}
 
-        .tiers{display:flex; flex-direction:column; gap:10px; margin-bottom:32px;}
-        .tier{display:flex; flex-direction:column; align-items:flex-start; gap:5px; text-align:left; cursor:pointer;
-          background:rgba(255,255,255,0.015); border:1px solid var(--hair); border-left:2px solid transparent;
-          padding:15px 18px; transition:.25s; font-family:inherit;}
-        .tier:hover{border-color:rgba(201,169,110,0.3);}
-        .tier.on{border-color:var(--goldhair); border-left:2px solid var(--gold); background:rgba(201,169,110,0.05);}
-        .tier-name{font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--white);}
-        .tier.on .tier-name{color:var(--gold);}
-        .tier-spec{font-size:11px; letter-spacing:.02em; color:var(--dim);}
-
         .editions{display:flex; flex-wrap:wrap; gap:20px; margin-bottom:28px;}
         .ed{background:none; border:none; cursor:pointer; color:var(--dim); font-family:inherit; font-weight:400;
           font-size:13px; letter-spacing:.04em; padding:0 0 8px; border-bottom:1px solid transparent; transition:.25s;}
@@ -300,11 +279,11 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           border:none; cursor:pointer; font-family:inherit; transition:background .3s;}
         .cta:hover{background:var(--gold);} .cta i{font-style:normal; transition:transform .3s;} .cta:hover i{transform:translateX(4px);}
 
-        .banner{margin-top:26px;}
-        .b-tier{color:var(--gold); font-size:10px; letter-spacing:.24em; text-transform:uppercase; margin-bottom:14px;}
-        .bgrid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
-        .bgrid b{font-weight:400; font-size:.82rem; color:var(--white); line-height:1.35; display:block;}
-        .bgrid span{display:block; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-top:5px;}
+        .detail-card{margin-top:26px; padding:26px 28px; background:rgba(255,255,255,0.02);}
+        .dc-name{color:var(--gold); font-size:10px; letter-spacing:.26em; text-transform:uppercase; margin-bottom:20px;}
+        .dc-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px 20px;}
+        .dc-grid span{display:block; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); margin-bottom:6px;}
+        .dc-grid b{font-weight:400; font-size:12.5px; color:var(--white); line-height:1.4;}
 
         .modal{position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
           padding:24px; background:rgba(6,8,11,0.72); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);}
@@ -331,7 +310,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           .arrow.l{transform:translateY(-50%);} .arrow.r{transform:translateY(-50%);}
           .detail{padding:36px 24px 56px; justify-content:flex-start;}
           .toprow{margin-bottom:28px;} .title{font-size:clamp(2rem,9vw,2.8rem);}
-          .price{font-size:2.1rem;} .bgrid{grid-template-columns:repeat(2,1fr); gap:18px 16px;}
+          .price{font-size:2.1rem;} .dc-grid{grid-template-columns:repeat(2,1fr);}
           .frow{grid-template-columns:1fr;}
         }
         @media (max-width:380px){ .editions{gap:16px;} }
