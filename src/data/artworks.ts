@@ -13,6 +13,7 @@ export type Artwork = {
   isTwin: boolean;
   images: { main: string; twin: string };
   room?: string[];              // photos de mise en situation (in-situ) — optionnel
+  sold?: string[];              // éditions déjà vendues, ex: ["1/5"] — barré + grisé
   description: string;
 };
 
@@ -124,8 +125,7 @@ export const ARTWORKS: Artwork[] = [
       "The oldest glacier in the Alps — slowly disappearing. A window into something ancient and indifferent.",
   },
 
-  /* ===== NOUVELLES ŒUVRES — Lac Léman ===== */
-  /* Titres & textes = provisoires (classe, à affiner par Brice) */
+  /* ===== NOUVELLES ŒUVRES — Lac Léman (Twins) ===== */
   {
     id: "passage",
     title: "Passage",
@@ -153,6 +153,122 @@ export const ARTWORKS: Artwork[] = [
     },
     description:
       "A weathered pontoon and its ladder, poised at the edge of still water. The quiet line where the lake begins.",
+  },
+
+  /* ===== THE COLLECTION — œuvres Solo (image unique, pas de Twin) ===== */
+  /* Titres · lieux · textes = provisoires (classe, à affiner par Brice) */
+  {
+    id: "heartwood",
+    title: "Heartwood",
+    location: "Valais · Switzerland",
+    year: "2025",
+    editions: "5 + 2 AP",
+    isTwin: false,
+    images: {
+      main: "/ONEARTPIX_DSC01354_ED_WEBP.webp",
+      twin: "/ONEARTPIX_DSC01354_ED_WEBP.webp",
+    },
+    description:
+      "The slow architecture of ancient wood. A century written in grain and shadow.",
+  },
+  {
+    id: "riviera",
+    title: "Riviera",
+    location: "Camogli · Italy",
+    year: "2025",
+    editions: "5 + 2 AP",
+    isTwin: false,
+    sold: ["1/5"],                 // 1re édition vendue
+    images: {
+      main: "/ONEARTPIX_DSC02648_ED_WEBP.webp",
+      twin: "/ONEARTPIX_DSC02648_ED_WEBP.webp",
+    },
+    description:
+      "A Ligurian morning above the shore. Colour, light, and the slow rhythm of the sea.",
+  },
+  {
+    id: "daybreak",
+    title: "Daybreak",
+    location: "Corsica · France",
+    year: "2025",
+    editions: "5 + 2 AP",
+    isTwin: false,
+    images: {
+      main: "/ONEARTPIX_DSC07002_ED_WEBP.webp",
+      twin: "/ONEARTPIX_DSC07002_ED_WEBP.webp",
+    },
+    description:
+      "First light breaking over the ridgeline. The valley waking in gold and mist.",
+  },
+  {
+    id: "crystalline",
+    title: "Crystalline",
+    location: "Alpine ice · Switzerland",
+    year: "2025",
+    editions: "5 + 2 AP",
+    isTwin: false,
+    images: {
+      main: "/ONEARTPIX_OLI03449_V2_WEBP.webp",
+      twin: "/ONEARTPIX_OLI03449_V2_WEBP.webp",
+    },
+    description:
+      "Ice caught mid-formation. Geometry drawn by cold alone.",
+  },
+  {
+    id: "glacial",
+    title: "Glacial",
+    location: "Frozen lake · Switzerland",
+    year: "2025",
+    editions: "5 + 2 AP",
+    isTwin: false,
+    images: {
+      main: "/ONEARTPIX_DSC00077_ED_COLLECTION_WEBP.webp",
+      twin: "/ONEARTPIX_DSC00077_ED_COLLECTION_WEBP.webp",
+    },
+    description:
+      "The frozen surface of a mountain lake. Fracture, bubble, and deep blue silence.",
+  },
+  {
+    id: "hoarfrost",
+    title: "Hoarfrost",
+    location: "Winter · Switzerland",
+    year: "2025",
+    editions: "5 + 2 AP",
+    isTwin: false,
+    images: {
+      main: "/ONEARTPIX_DSC03285_ED_WEBP.webp",
+      twin: "/ONEARTPIX_DSC03285_ED_WEBP.webp",
+    },
+    description:
+      "The edge where frost meets shadow. Winter, reduced to its essence.",
+  },
+  {
+    id: "first-frost",
+    title: "First Frost",
+    location: "Dawn · Switzerland",
+    year: "2025",
+    editions: "5 + 2 AP",
+    isTwin: false,
+    images: {
+      main: "/ONEARTPIX_OLI03372_ED_WEBP.webp",
+      twin: "/ONEARTPIX_OLI03372_ED_WEBP.webp",
+    },
+    description:
+      "Dawn light across a field of frost. The first breath of the cold season.",
+  },
+  {
+    id: "silver-bark",
+    title: "Silver Bark",
+    location: "Forest · Switzerland",
+    year: "2025",
+    editions: "5 + 2 AP",
+    isTwin: false,
+    images: {
+      main: "/ONEARTPIX_OLI03878_ED_WEBP.webp",
+      twin: "/ONEARTPIX_OLI03878_ED_WEBP.webp",
+    },
+    description:
+      "Bark reduced to pure line and texture. Nature's own quiet abstraction.",
   },
 ];
 
