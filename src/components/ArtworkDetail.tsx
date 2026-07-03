@@ -224,3 +224,27 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           font-size:10.5px; letter-spacing:.26em; text-transform:uppercase; font-weight:500; padding:18px;
           text-decoration:none; transition:background .3s;}
         .cta:hover{background:var(--gold);} .cta i{font-style:normal; transition:transform .3s;} .cta:hover i{transform:translateX(4px);}
+
+.abs-piece{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px;
+          color:var(--dim); font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; text-decoration:none; transition:color .3s;}
+        .abs-piece:hover{color:var(--gold);} .abs-piece i{font-style:normal;}
+
+        .meta{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:34px;
+          border-top:1px solid var(--hair); padding-top:24px;}
+        .meta b{font-weight:400; font-size:.9rem; color:var(--white);}
+        .meta span{display:block; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-top:4px;}
+
+        @media (max-width:900px){
+          .oap-detail{grid-template-columns:1fr;}
+          .art{min-height:60vh; height:60vh;}
+          .arrow{opacity:.92; transform:translateY(-50%); width:44px; height:44px; font-size:18px;}
+          .arrow.l{transform:translateY(-50%);} .arrow.r{transform:translateY(-50%);}
+          .detail{padding:36px 24px 56px; justify-content:flex-start;}
+          .toprow{margin-bottom:28px;} .title{font-size:clamp(2rem,9vw,2.8rem);}
+          .price{font-size:2.1rem;} .meta{grid-template-columns:repeat(2,1fr); gap:20px 16px;}
+        }
+        @media (max-width:380px){ .editions{gap:16px;} }
+      `}</style>
+    </section>
+  );
+}
