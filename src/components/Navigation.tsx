@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 
 /* ============================================================
-   NAVIGATION — bande fine · logo XXL à cheval · liens /#… (scroll)
-   Pas de bordure (aucune ligne ne traverse le logo)
+   NAVIGATION — logo XXL à cheval · liens /#… (scroll)
+   CONTACT ouvre directement le pop-up de contact
    ============================================================ */
 
 const LEFT = [
@@ -34,6 +34,28 @@ export default function Navigation() {
   const hov = (e: React.MouseEvent<HTMLAnchorElement>, on: boolean) =>
     (e.currentTarget.style.color = on ? GOLD : "rgba(244,242,237,0.78)");
 
+  const openContact = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setOpen(false);
+    if (typeof window !== "undefined") {
+      if (window.location.pathname === "/") window.dispatchEvent(new Event("openContactModal"));
+      else window.location.href = "/?contact=1";
+    }
+  };
+
+  const renderLink = (item: { label: string; href: string }, key: string) =>
+    item.label === "Contact" ? (
+      <a key={key} href={item.href} style={linkStyle} onClick={openContact}
+        onMouseEnter={(e) => hov(e, true)} onMouseLeave={(e) => hov(e, false)}>
+        {item.label}
+      </a>
+    ) : (
+      <a key={key} href={item.href} style={linkStyle} onClick={() => setOpen(false)}
+        onMouseEnter={(e) => hov(e, true)} onMouseLeave={(e) => hov(e, false)}>
+        {item.label}
+      </a>
+    );
+
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
@@ -57,23 +79,13 @@ export default function Navigation() {
           }}
         >
           <div className="hidden md:flex" style={{ gap: "34px", justifyContent: "flex-start" }}>
-            {LEFT.map((item) => (
-              <a key={item.label} href={item.href} style={linkStyle} onClick={() => setOpen(false)}
-                onMouseEnter={(e) => hov(e, true)} onMouseLeave={(e) => hov(e, false)}>
-                {item.label}
-              </a>
-            ))}
+            {LEFT.map((item) => renderLink(item, item.label))}
           </div>
 
           <span aria-hidden style={{ display: "block", width: "1px" }} />
 
           <div className="hidden md:flex" style={{ gap: "34px", justifyContent: "flex-end" }}>
-            {RIGHT.map((item) => (
-              <a key={item.label} href={item.href} style={linkStyle} onClick={() => setOpen(false)}
-                onMouseEnter={(e) => hov(e, true)} onMouseLeave={(e) => hov(e, false)}>
-                {item.label}
-              </a>
-            ))}
+            {RIGHT.map((item) => renderLink(item, item.label))}
           </div>
 
           <button className="md:hidden flex flex-col" aria-label="Menu" onClick={() => setOpen((o) => !o)}
@@ -97,11 +109,19 @@ export default function Navigation() {
           background: "rgba(14,17,22,0.98)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)" }}>
         <div className="flex flex-col px-6 py-2">
           {ALL.map((item, i) => (
-            <a key={item.label + i} href={item.href} onClick={() => setOpen(false)} className="uppercase"
-              style={{ color: "rgba(244,242,237,0.85)", letterSpacing: "0.22em", fontSize: "12px", textDecoration: "none",
-                padding: "16px 0", borderBottom: i < ALL.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
-              {item.label}
-            </a>
+            item.label === "Contact" ? (
+              <a key={item.label + i} href={item.href} onClick={openContact} className="uppercase"
+                style={{ color: "rgba(244,242,237,0.85)", letterSpacing: "0.22em", fontSize: "12px", textDecoration: "none",
+                  padding: "16px 0", borderBottom: i < ALL.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+                {item.label}
+              </a>
+            ) : (
+              <a key={item.label + i} href={item.href} onClick={() => setOpen(false)} className="uppercase"
+                style={{ color: "rgba(244,242,237,0.85)", letterSpacing: "0.22em", fontSize: "12px", textDecoration: "none",
+                  padding: "16px 0", borderBottom: i < ALL.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+                {item.label}
+              </a>
+            )
           ))}
         </div>
       </div>
