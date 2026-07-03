@@ -56,7 +56,7 @@ export default function Collection() {
           Curated Selection
         </p>
         <h2 style={{ fontSize: "clamp(2rem, 4.5vw, 3.5rem)", fontWeight: 300, color: WHITE, letterSpacing: "-0.02em" }}>
-          The Collection
+          The Twins Collection
         </h2>
         <p className="mt-4" style={{ color: "#6b6a65", fontSize: "12px", letterSpacing: "0.14em" }}>
           Each work exists as an Original &amp; its Chromatic Twin · 5 editions · 2 artist proofs
