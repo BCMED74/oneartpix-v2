@@ -1,6 +1,6 @@
 /* ============================================================
    ABOUT — OneArtPix (registre Porsche)
-   Image portrait + texte · titre SANS off-white · gold murmure
+   Centrage FLEX (increvable) · image portrait + texte
    ============================================================ */
 
 const GOLD = "#C9A96E";
@@ -11,23 +11,22 @@ export default function About() {
     <section
       id="about"
       className="py-24 md:py-32 px-6 md:px-12"
-      style={{ background: "#0E1116", borderTop: "1px solid rgba(255,255,255,0.06)" }}
+      style={{ background: "#0E1116", borderTop: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "center" }}
     >
-      <div className="max-w-screen-2xl mx-auto grid md:grid-cols-2 gap-14 md:gap-20 items-center">
+      <div
+        className="grid md:grid-cols-2 gap-14 md:gap-20 items-center"
+        style={{ width: "100%", maxWidth: "1536px" }}
+      >
         {/* Image */}
-        <div
-          className="relative overflow-hidden"
-          style={{ aspectRatio: "3/4", border: "1px solid rgba(255,255,255,0.08)" }}
-        >
+        <div className="relative overflow-hidden"
+          style={{ aspectRatio: "4/5", maxHeight: "640px", border: "1px solid rgba(255,255,255,0.08)" }}>
           <img
             src="https://oneartpix.com/wp-content/uploads/2026/04/DSC04290_TOPAZ_ED_V3_TIFF_PRINT-BARYTA-WEBP.webp"
             alt="OneArtPix — Fine Art Photography"
             className="w-full h-full object-cover"
           />
-          <div
-            className="absolute inset-0"
-            style={{ background: "linear-gradient(to top, rgba(14,17,22,0.35) 0%, transparent 55%)" }}
-          />
+          <div className="absolute inset-0"
+            style={{ background: "linear-gradient(to top, rgba(14,17,22,0.35) 0%, transparent 55%)" }} />
         </div>
 
         {/* Texte */}
@@ -35,10 +34,8 @@ export default function About() {
           <p className="mb-6 uppercase" style={{ color: GOLD, fontSize: "10.5px", letterSpacing: "0.34em" }}>
             About
           </p>
-          <h2
-            className="mb-8"
-            style={{ fontSize: "clamp(1.9rem, 4vw, 3rem)", fontWeight: 300, color: WHITE, lineHeight: 1.12, letterSpacing: "-0.02em" }}
-          >
+          <h2 className="mb-8"
+            style={{ fontSize: "clamp(1.9rem, 4vw, 3rem)", fontWeight: 300, color: WHITE, lineHeight: 1.12, letterSpacing: "-0.02em" }}>
             Photographer, artist,
             <br />
             difficult to categorize.
@@ -50,7 +47,6 @@ export default function About() {
             OneArtPix. The work speaks, not the name.
           </p>
 
-          {/* Stats */}
           <div className="grid grid-cols-3 gap-8" style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "28px" }}>
             {[
               ["5 + 2 AP", "Per edition"],
