@@ -5,17 +5,17 @@ import { ARTWORKS } from "@/data/artworks";
 
 /* ============================================================
    COLLECTION — carrousel PLEIN ÉCRAN adaptatif (registre Porsche)
-   6 tuiles : chaque œuvre = Original + Chromatic Twin
+   Ne montre QUE les Twins (les Solos vivent sur /collection)
    Desktop (≥1024) : panneaux qui s'agrandissent, hauteur ~écran
-   Mobile/tablette : bande défilante, grandes photos (taille mini)
-   Clic Original → /collection/[id]   ·   Twin → ?v=twin
+   Mobile/tablette : bande défilante, grandes photos
    ============================================================ */
 
 const GOLD = "#C9A96E";
 const WHITE = "#F4F2ED";
 
 type Tile = { key: string; href: string; img: string; title: string; location: string; twin: boolean };
-const TILES: Tile[] = ARTWORKS.flatMap((art) => {
+/* Le carrousel d'accueil ne montre QUE les Twins (les Solos vivent sur /collection) */
+const TILES: Tile[] = ARTWORKS.filter((art) => art.isTwin).flatMap((art) => {
   const original: Tile = {
     key: art.id, href: `/collection/${art.id}`, img: art.images.main,
     title: art.title, location: art.location, twin: false,
@@ -130,6 +130,15 @@ export default function Collection() {
           </p>
         </div>
       )}
+
+      {/* LIEN VERS LA PAGE COMPLÈTE */}
+      <div className="px-6 md:px-12" style={{ marginTop: "clamp(40px,6vh,64px)" }}>
+        <Link href="/collection" style={{ display: "inline-flex", alignItems: "center", gap: "12px",
+          color: WHITE, fontSize: "10.5px", letterSpacing: "0.26em", textTransform: "uppercase",
+          textDecoration: "none", borderBottom: "1px solid rgba(201,169,110,0.55)", paddingBottom: "8px" }}>
+          View the full collection <span style={{ color: GOLD }}>→</span>
+        </Link>
+      </div>
     </section>
   );
 }
