@@ -3,7 +3,7 @@ import { useState } from "react";
 
 /* ============================================================
    CONTACT — OneArtPix (registre Porsche)
-   Formulaire épuré · titre SANS off-white · CTA plein contraste
+   Centrage FLEX (increvable) · formulaire épuré · CTA plein contraste
    NB: envoi email réel branché dans une passe dédiée
    ============================================================ */
 
@@ -33,24 +33,13 @@ export default function Contact() {
   };
 
   const fieldStyle: React.CSSProperties = {
-    width: "100%",
-    background: "rgba(255,255,255,0.02)",
-    border: "1px solid rgba(255,255,255,0.12)",
-    borderRadius: 0,
-    padding: "15px 16px",
-    color: WHITE,
-    fontSize: "14px",
-    letterSpacing: "0.02em",
-    outline: "none",
-    transition: "border-color 0.3s, background 0.3s",
+    width: "100%", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.12)",
+    borderRadius: 0, padding: "15px 16px", color: WHITE, fontSize: "14px", letterSpacing: "0.02em",
+    outline: "none", transition: "border-color 0.3s, background 0.3s",
   };
   const labelStyle: React.CSSProperties = {
-    display: "block",
-    marginBottom: "10px",
-    color: "#6b6a65",
-    fontSize: "9.5px",
-    letterSpacing: "0.28em",
-    textTransform: "uppercase",
+    display: "block", marginBottom: "10px", color: "#6b6a65", fontSize: "9.5px",
+    letterSpacing: "0.28em", textTransform: "uppercase",
   };
   const onFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     e.currentTarget.style.borderColor = "rgba(201,169,110,0.6)";
@@ -65,10 +54,9 @@ export default function Contact() {
     <section
       id="contact"
       className="py-24 md:py-32 px-6"
-      style={{ background: INK, borderTop: "1px solid rgba(255,255,255,0.06)" }}
+      style={{ background: INK, borderTop: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "center" }}
     >
-      <div className="max-w-xl mx-auto">
-        {/* === EN-TÊTE === */}
+      <div style={{ width: "100%", maxWidth: "576px" }}>
         <div className="text-center">
           <p className="mb-5 uppercase" style={{ color: GOLD, fontSize: "10.5px", letterSpacing: "0.34em" }}>
             Get in Touch
@@ -82,7 +70,6 @@ export default function Contact() {
           </p>
         </div>
 
-        {/* === FORMULAIRE / CONFIRMATION === */}
         {sent ? (
           <div style={{ color: GOLD, fontSize: "14px", letterSpacing: "0.18em", padding: "48px 0", textAlign: "center", border: "1px solid rgba(201,169,110,0.25)" }}>
             ✦ Message received. I will be in touch shortly.
@@ -118,22 +105,16 @@ export default function Contact() {
                 style={{ ...fieldStyle, resize: "none" }} onFocus={onFocus} onBlur={onBlur} />
             </div>
 
-            <button
-              type="submit" disabled={sending}
-              className="w-full py-5 transition-all duration-300"
-              style={{
-                background: WHITE, border: `1px solid ${WHITE}`, borderRadius: 0, color: INK,
-                fontSize: "10.5px", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 500, cursor: "pointer",
-              }}
+            <button type="submit" disabled={sending} className="w-full py-5 transition-all duration-300"
+              style={{ background: WHITE, border: `1px solid ${WHITE}`, borderRadius: 0, color: INK,
+                fontSize: "10.5px", letterSpacing: "0.3em", textTransform: "uppercase", fontWeight: 500, cursor: "pointer" }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = GOLD; (e.currentTarget as HTMLElement).style.borderColor = GOLD; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = WHITE; (e.currentTarget as HTMLElement).style.borderColor = WHITE; }}
-            >
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = WHITE; (e.currentTarget as HTMLElement).style.borderColor = WHITE; }}>
               {sending ? "Sending..." : "Send Message"}
             </button>
           </form>
         )}
 
-        {/* === PIED DE PAGE === */}
         <div className="mt-20 pt-8 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
           <p style={{ color: "#6b6a65", fontSize: "10.5px", letterSpacing: "0.18em" }}>
             © 2026 OneArtPix · info@oneartpix.com
