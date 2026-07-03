@@ -1,7 +1,7 @@
 /* ============================================================
    DONNÉES PARTAGÉES — OneArtPix
-   Lexique verrouillé : Original · Chromatic Twin · Reunited
-   Deux tiers : Prestige (5+2 AP) · Collector (10+2 AP)
+   Lexique : Original · Chromatic Twin · Reunited
+   3 tiers : Prestige (5+2 AP) · Collector (10+2 AP) · Unique (1/1)
    ============================================================ */
 
 export type Artwork = {
@@ -15,7 +15,7 @@ export type Artwork = {
   description: string;
 };
 
-/* === TIERS (structure d'édition) === */
+/* === TIERS === */
 export const TIERS = {
   prestige: {
     key: "prestige",
@@ -31,11 +31,18 @@ export const TIERS = {
     format: "40 – 90 cm · long edge",
     material: "Baryta on Dibond",
   },
+  unique: {
+    key: "unique",
+    name: "Unique Piece",
+    editions: "1 / 1",
+    format: "Bespoke · made to measure",
+    material: "Museum-grade · on request",
+  },
 } as const;
 
 export type TierKey = keyof typeof TIERS;
 
-/* === Tarifs par numéro (prix "From") === */
+/* === Tarifs (prix "From"). price = 0 -> "Price on request" === */
 export const EDITIONS_PRESTIGE = [
   { label: "1/5", price: 1200 },
   { label: "2/5", price: 1800 },
@@ -44,7 +51,7 @@ export const EDITIONS_PRESTIGE = [
   { label: "5/5", price: 8000 },
 ];
 
-/* PRIX COLLECTOR — à confirmer par Brice (placeholders) */
+/* PRIX COLLECTOR — à confirmer par Brice */
 export const EDITIONS_COLLECTOR = [
   { label: "1/10", price: 600 },
   { label: "2/10", price: 750 },
@@ -58,8 +65,11 @@ export const EDITIONS_COLLECTOR = [
   { label: "10/10", price: 4800 },
 ];
 
+/* UNIQUE — 1/1, prix sur demande */
+export const EDITIONS_UNIQUE = [{ label: "1/1", price: 0 }];
+
 export const editionsFor = (tier: TierKey) =>
-  tier === "prestige" ? EDITIONS_PRESTIGE : EDITIONS_COLLECTOR;
+  tier === "prestige" ? EDITIONS_PRESTIGE : tier === "collector" ? EDITIONS_COLLECTOR : EDITIONS_UNIQUE;
 
 /* === Prix formaté façon suisse : 1200 -> "1'200" === */
 export const formatCHF = (n: number) =>
