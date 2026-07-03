@@ -4,17 +4,29 @@ import Link from "next/link";
 import { ARTWORKS } from "@/data/artworks";
 
 /* ============================================================
-   COLLECTION — carrousel "film-strip"
-   Desktop : photogrammes qui s'agrandissent au survol
-   Mobile  : bande défilante (swipe)
-   Clic sur une œuvre → page produit dédiée /collection/[id]
+   COLLECTION — carrousel épuré (registre Porsche)
+   6 tuiles : chaque œuvre = Original + Twin psychédélique
+   Clic Original → /collection/[id]
+   Clic Twin     → /collection/[id]?v=twin (psyché pré-sélectionné)
    ============================================================ */
 
-const perforations: React.CSSProperties = {
-  height: "12px",
-  background:
-    "repeating-linear-gradient(to right, transparent 0 12px, rgba(255,255,255,0.06) 12px 26px)",
-};
+const GOLD = "#C9A96E";
+const WHITE = "#F4F2ED";
+
+/* Construit la liste des tuiles : original puis twin (si dispo) */
+type Tile = { key: string; href: string; img: string; title: string; location: string; twin: boolean };
+const TILES: Tile[] = ARTWORKS.flatMap((art) => {
+  const original: Tile = {
+    key: art.id, href: `/collection/${art.id}`, img: art.images.main,
+    title: art.title, location: art.location, twin: false,
+  };
+  if (!art.isTwin) return [original];
+  const twin: Tile = {
+    key: `${art.id}-twin`, href: `/collection/${art.id}?v=twin`, img: art.images.twin,
+    title: art.title, location: art.location, twin: true,
+  };
+  return [original, twin];
+});
 
 export default function Collection() {
   const [active, setActive] = useState(0);
@@ -28,34 +40,46 @@ export default function Collection() {
     return () => mq.removeEventListener("change", update);
   }, []);
 
+  /* Badge Twin (coin haut droit) */
+  const twinBadge = (
+    <div
+      className="absolute top-4 right-4"
+      style={{
+        background: "rgba(14,17,22,0.55)", border: "1px solid rgba(201,169,110,0.4)",
+        color: GOLD, fontSize: "8px", letterSpacing: "0.22em", padding: "4px 10px", textTransform: "uppercase",
+      }}
+    >
+      Twin ✦
+    </div>
+  );
+
   return (
-    <section id="collection" className="py-24 md:py-32" style={{ background: "#0a0a0a" }}>
+    <section id="collection" className="py-24 md:py-32" style={{ background: "#0E1116" }}>
       {/* === EN-TÊTE === */}
       <div className="max-w-screen-2xl mx-auto mb-14 md:mb-16 px-6 md:px-12">
-        <p className="mb-4 tracking-widest uppercase"
-           style={{ color: "#C9A96E", fontSize: "11px", letterSpacing: "0.4em" }}>
+        <p className="mb-4 uppercase" style={{ color: GOLD, fontSize: "10.5px", letterSpacing: "0.34em" }}>
           Curated Selection
         </p>
-        <h2 className="font-display"
-            style={{ fontSize: "clamp(2rem, 4.5vw, 3.75rem)", fontWeight: 300, color: "#fff" }}>
-          The <em style={{ color: "#C9A96E" }}>Collection</em>
+        <h2 style={{ fontSize: "clamp(2rem, 4.5vw, 3.5rem)", fontWeight: 300, color: WHITE, letterSpacing: "-0.02em" }}>
+          The Collection
         </h2>
-        <p className="mt-4" style={{ color: "#888", fontSize: "13px", letterSpacing: "0.15em" }}>
-          5 editions · 2 artist proofs · Signed &amp; numbered · Made to order
+        <p className="mt-4" style={{ color: "#6b6a65", fontSize: "12px", letterSpacing: "0.14em" }}>
+          Each work exists as an original &amp; its psychedelic twin · 5 editions · 2 artist proofs
         </p>
       </div>
 
-      {/* ================= DESKTOP : pellicule ================= */}
+      {/* ================= DESKTOP ================= */}
       {isDesktop ? (
         <div className="max-w-screen-2xl mx-auto px-6 md:px-12">
-          <div style={perforations} />
-
-          <div className="flex" style={{ gap: "3px", height: "clamp(300px, 44vh, 460px)", background: "#000" }}
-               onMouseLeave={() => setActive(0)}>
-            {ARTWORKS.map((art, i) => (
+          <div
+            className="flex"
+            style={{ gap: "6px", height: "clamp(320px, 46vh, 480px)" }}
+            onMouseLeave={() => setActive(0)}
+          >
+            {TILES.map((tile, i) => (
               <Link
-                key={art.id}
-                href={`/collection/${art.id}`}
+                key={tile.key}
+                href={tile.href}
                 onMouseEnter={() => setActive(i)}
                 className="relative overflow-hidden block"
                 style={{
@@ -64,86 +88,77 @@ export default function Collection() {
                   minWidth: 0,
                   cursor: "pointer",
                   transition: "flex-grow 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-                  background: "#111",
+                  background: "#0b0d11",
                 }}
               >
                 <img
-                  src={art.images.main}
-                  alt={art.title}
+                  src={tile.img}
+                  alt={tile.twin ? `${tile.title} — Psychedelic Twin` : tile.title}
                   className="w-full h-full object-cover"
-                  style={{
-                    transition: "filter 0.6s ease",
-                    filter: active === i ? "none" : "brightness(0.6)",
-                  }}
+                  style={{ transition: "filter 0.6s ease", filter: active === i ? "none" : "brightness(0.55)" }}
                 />
-                <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8"
-                     style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 55%)" }}>
-                  <p style={{ color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: "6px" }}>
-                    {art.location}
+                <div
+                  className="absolute inset-0 flex flex-col justify-end p-6 md:p-8"
+                  style={{ background: "linear-gradient(to top, rgba(14,17,22,0.9) 0%, transparent 55%)" }}
+                >
+                  <p style={{ color: GOLD, fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase", marginBottom: "8px" }}>
+                    {tile.location}
                   </p>
-                  <h3 className="font-display"
-                      style={{ fontSize: "1.7rem", fontWeight: 300, color: "#fff", whiteSpace: "nowrap",
-                               opacity: active === i ? 1 : 0, transition: "opacity 0.4s ease 0.15s" }}>
-                    {art.title}
+                  <h3
+                    style={{
+                      fontSize: "1.55rem", fontWeight: 300, color: WHITE, letterSpacing: "-0.01em", whiteSpace: "nowrap",
+                      opacity: active === i ? 1 : 0, transition: "opacity 0.4s ease 0.15s",
+                    }}
+                  >
+                    {tile.title}
+                    {tile.twin && <span style={{ color: GOLD, fontSize: "0.9rem" }}> · Twin</span>}
                   </h3>
-                  <span style={{
-                    display: "inline-block", marginTop: "16px", width: "fit-content",
-                    color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase",
-                    border: "1px solid rgba(201,169,110,0.5)", padding: "8px 20px",
-                    opacity: active === i ? 1 : 0, transition: "opacity 0.4s ease 0.2s",
-                  }}>
-                    Discover
+                  <span
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: "10px", marginTop: "16px", width: "fit-content",
+                      color: WHITE, fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase",
+                      opacity: active === i ? 1 : 0, transition: "opacity 0.4s ease 0.2s",
+                    }}
+                  >
+                    Discover <span style={{ color: GOLD }}>→</span>
                   </span>
                 </div>
-                {art.isTwin && (
-                  <div className="absolute top-4 right-4"
-                       style={{ background: "rgba(10,10,10,0.6)", border: "1px solid rgba(201,169,110,0.4)",
-                                color: "#C9A96E", fontSize: "8px", letterSpacing: "0.2em", padding: "4px 10px", textTransform: "uppercase" }}>
-                    Twin
-                  </div>
-                )}
+                {tile.twin && twinBadge}
               </Link>
             ))}
           </div>
-
-          <div style={perforations} />
-          <p className="mt-5 text-center" style={{ color: "#555", fontSize: "10px", letterSpacing: "0.25em", textTransform: "uppercase" }}>
-            Hover to expand · Click to open
-          </p>
         </div>
       ) : (
-        /* ================= MOBILE : bande défilante ================= */
+        /* ================= MOBILE ================= */
         <div>
-          <div className="flex px-6"
-               style={{ gap: "12px", overflowX: "auto", scrollSnapType: "x mandatory", paddingBottom: "10px", WebkitOverflowScrolling: "touch" }}>
-            {ARTWORKS.map((art) => (
+          <div
+            className="flex px-6"
+            style={{ gap: "12px", overflowX: "auto", scrollSnapType: "x mandatory", paddingBottom: "10px", WebkitOverflowScrolling: "touch" }}
+          >
+            {TILES.map((tile) => (
               <Link
-                key={art.id}
-                href={`/collection/${art.id}`}
+                key={tile.key}
+                href={tile.href}
                 className="relative overflow-hidden block"
-                style={{ flex: "0 0 82%", scrollSnapAlign: "center", aspectRatio: "4/5", background: "#111" }}
+                style={{ flex: "0 0 78%", scrollSnapAlign: "center", aspectRatio: "4/5", background: "#0b0d11" }}
               >
-                <img src={art.images.main} alt={art.title} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 flex flex-col justify-end p-6"
-                     style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 55%)" }}>
-                  <p style={{ color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: "6px" }}>
-                    {art.location}
+                <img src={tile.img} alt={tile.title} className="w-full h-full object-cover" />
+                <div
+                  className="absolute inset-0 flex flex-col justify-end p-6"
+                  style={{ background: "linear-gradient(to top, rgba(14,17,22,0.9) 0%, transparent 55%)" }}
+                >
+                  <p style={{ color: GOLD, fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase", marginBottom: "6px" }}>
+                    {tile.location}
                   </p>
-                  <h3 className="font-display" style={{ fontSize: "1.5rem", fontWeight: 300, color: "#fff" }}>
-                    {art.title}
+                  <h3 style={{ fontSize: "1.35rem", fontWeight: 300, color: WHITE }}>
+                    {tile.title}{tile.twin && <span style={{ color: GOLD, fontSize: "0.85rem" }}> · Twin</span>}
                   </h3>
                 </div>
-                {art.isTwin && (
-                  <div className="absolute top-4 right-4"
-                       style={{ background: "rgba(10,10,10,0.6)", border: "1px solid rgba(201,169,110,0.4)",
-                                color: "#C9A96E", fontSize: "8px", letterSpacing: "0.2em", padding: "4px 10px", textTransform: "uppercase" }}>
-                    Twin
-                  </div>
-                )}
+                {tile.twin && twinBadge}
               </Link>
             ))}
           </div>
-          <p className="mt-4 text-center" style={{ color: "#555", fontSize: "10px", letterSpacing: "0.25em", textTransform: "uppercase" }}>
+          <p className="mt-4 text-center" style={{ color: "#4a4945", fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase" }}>
             Swipe · Tap to open
           </p>
         </div>
