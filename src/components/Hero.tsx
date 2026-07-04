@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 /* ============================================================
    HERO — OneArtPix (registre Porsche)
@@ -113,22 +114,23 @@ export default function Hero() {
             </span>
           </div>
 
-          {/* CTA */}
-          <a href="#collection" className="inline-flex items-center gap-4 group" style={{ width: "fit-content" }}>
-            <span
-              style={{
-                color: WHITE,
-                letterSpacing: "0.28em",
-                fontSize: "10.5px",
-                textTransform: "uppercase",
-                borderBottom: "1px solid rgba(201,169,110,0.5)",
-                paddingBottom: "4px",
-              }}
-            >
-              Discover the Collection
-            </span>
-            <span style={{ color: GOLD, fontSize: "16px" }}>→</span>
-          </a>
+          {/* CTA — 2 boutons : Collection (page complète) · The Twins (carrousel) */}
+          <div className="flex items-center" style={{ gap: "34px", flexWrap: "wrap" }}>
+            <Link href="/collection" className="inline-flex items-center gap-3" style={{ width: "fit-content" }}>
+              <span style={{ color: WHITE, letterSpacing: "0.28em", fontSize: "10.5px", textTransform: "uppercase",
+                borderBottom: "1px solid rgba(201,169,110,0.6)", paddingBottom: "4px" }}>
+                Collection
+              </span>
+              <span style={{ color: GOLD, fontSize: "16px" }}>→</span>
+            </Link>
+            <a href="#collection" className="inline-flex items-center gap-3" style={{ width: "fit-content" }}>
+              <span style={{ color: "rgba(244,242,237,0.72)", letterSpacing: "0.28em", fontSize: "10.5px", textTransform: "uppercase",
+                borderBottom: "1px solid rgba(255,255,255,0.2)", paddingBottom: "4px" }}>
+                The Twins
+              </span>
+              <span style={{ color: GOLD, fontSize: "15px" }}>↓</span>
+            </a>
+          </div>
         </div>
       </div>
 
