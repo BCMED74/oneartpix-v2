@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { FORM_ENDPOINT, FORM_READY, EMAIL } from "@/data/site";
 
 /* ============================================================
    CONTACT — grande bande "Contact the Artist" → formulaire en POP-UP
@@ -12,7 +13,7 @@ const INK = "#0E1116";
 
 export default function Contact() {
   const [openModal, setOpenModal] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", artwork: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", artwork: "", message: "" });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
 
@@ -30,12 +31,23 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    try {
-      await fetch("https://formspree.io/f/info@oneartpix.com", {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form),
-      });
-    } catch { /* silencieux */ }
-    setSending(false); setSent(true);
+    if (FORM_READY) {
+      try {
+        const res = await fetch(FORM_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(form),
+        });
+        if (res.ok) { setSent(true); setSending(false); return; }
+      } catch { /* on bascule sur le repli mailto ci-dessous */ }
+    }
+    /* Repli : ouvre le client mail de l'utilisateur, pré-rempli vers EMAIL */
+    const subject = encodeURIComponent(`Print inquiry — ${form.artwork || "OneArtPix"}`);
+    const body = encodeURIComponent(
+      `Name: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\nArtwork: ${form.artwork}\n\n${form.message}`
+    );
+    window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
+    setSending(false);
   };
 
   const fieldStyle: React.CSSProperties = {
@@ -70,9 +82,6 @@ export default function Contact() {
           onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = WHITE; }}>
           Contact the Artist <span>→</span>
         </button>
-        <p style={{ color: "#5a5955", fontSize: "10.5px", letterSpacing: "0.18em", marginTop: "clamp(60px, 10vh, 110px)" }}>
-          © 2026 OneArtPix · info@oneartpix.com
-        </p>
       </section>
 
       {/* ===== POP-UP ===== */}
@@ -114,6 +123,11 @@ export default function Contact() {
                     </div>
                   </div>
                   <div style={{ marginBottom: "16px" }}>
+                    <label style={labelStyle}>Phone <span style={{ textTransform: "none", letterSpacing: 0, color: "#4a4a47" }}>· optional</span></label>
+                    <input type="tel" placeholder="+41 …" value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })} style={fieldStyle} />
+                  </div>
+                  <div style={{ marginBottom: "16px" }}>
                     <label style={labelStyle}>Artwork of Interest</label>
                     <input type="text" placeholder="e.g. The Guardians · Edition 2/5" value={form.artwork}
                       onChange={(e) => setForm({ ...form, artwork: e.target.value })} style={fieldStyle} />
@@ -130,6 +144,9 @@ export default function Contact() {
                     onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = WHITE; (e.currentTarget as HTMLElement).style.borderColor = WHITE; }}>
                     {sending ? "Sending..." : "Send Message"}
                   </button>
+                  <p style={{ textAlign: "center", marginTop: "18px", color: "#5a5955", fontSize: "10.5px", letterSpacing: "0.08em" }}>
+                    or email directly · <a href={`mailto:${EMAIL}`} style={{ color: GOLD, textDecoration: "none" }}>{EMAIL}</a>
+                  </p>
                 </form>
               </>
             )}
