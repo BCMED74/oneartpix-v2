@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { type Artwork, ARTWORKS, TIERS, type TierKey, editionsFor, pairPrice } from "@/data/artworks";
 import { FORM_ENDPOINT, FORM_READY, EMAIL } from "@/data/site";
@@ -27,6 +27,8 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
+  const scrollMore = (dir: number) => moreRef.current?.scrollBy({ left: dir * 330, behavior: "smooth" });
 
   useEffect(() => {
     if (typeof window !== "undefined" && artwork.isTwin) {
@@ -219,17 +221,17 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           </div>
         </div>
 
-        {/* ===== EXPLORE THE COLLECTION — vignettes uniformes + nav œuvres ===== */}
+        {/* ===== EXPLORE THE COLLECTION — vignettes uniformes + flèches de défilement ===== */}
         {others.length > 0 && (
           <div className="more">
             <div className="more-head">
               <p className="more-lbl">Explore the Collection</p>
               <div className="more-nav">
-                <Link href={`/collection/${prevId}`} className="more-arrow" aria-label="Previous artwork">‹</Link>
-                <Link href={`/collection/${nextId}`} className="more-arrow" aria-label="Next artwork">›</Link>
+                <button className="more-arrow" aria-label="Scroll left" onClick={() => scrollMore(-1)}>‹</button>
+                <button className="more-arrow" aria-label="Scroll right" onClick={() => scrollMore(1)}>›</button>
               </div>
             </div>
-            <div className="more-row">
+            <div className="more-row" ref={moreRef}>
               {others.map((a) => (
                 <Link key={a.id} href={`/collection/${a.id}`} className="more-tile">
                   <span className="more-frame"><img src={a.images.main} alt={a.title} /></span>
@@ -300,7 +302,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           display:grid; grid-template-columns:1.35fr .9fr; min-height:100vh; letter-spacing:-.01em;
         }
         .eyebrow{font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:var(--dim); font-weight:400;}
-        .visual{position:relative; overflow:hidden; background:#0b0d11;}
+        .visual{position:relative; overflow:hidden; background:#0b0d11; min-width:0;}
         .art{width:100%; height:100%; min-height:100vh; object-fit:cover; display:block;
              transform:scale(1.04); animation:kenburns 28s ease-out forwards;}
         @keyframes kenburns{to{transform:scale(1.12);}}
@@ -333,7 +335,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
         .thumb:hover{opacity:1;} .thumb.on{opacity:1; border-color:var(--goldhair);}
 
-        .detail{display:flex; flex-direction:column; justify-content:center;
+        .detail{display:flex; flex-direction:column; justify-content:center; min-width:0;
           padding:clamp(96px,8vh,120px) clamp(32px,4vw,72px) clamp(48px,7vh,80px);}
         .toprow{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:30px;}
         .back{font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--grey); text-decoration:none;}
@@ -376,14 +378,15 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         .dc-grid span{display:block; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); margin-bottom:6px;}
         .dc-grid b{font-weight:400; font-size:12.5px; color:var(--white); line-height:1.4;}
 
-        /* Carrousel "Explore the Collection" — vignettes uniformes */
-        .more{margin-top:40px; border-top:1px solid var(--hair); padding-top:26px;}
+        /* Carrousel "Explore the Collection" — max ~4 vignettes, reste via flèches */
+        .more{margin-top:40px; border-top:1px solid var(--hair); padding-top:26px; max-width:680px;}
         .more-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;}
         .more-lbl{font-size:9.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--dim);}
         .more-nav{display:flex; gap:8px;}
-        .more-arrow{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-          border:1px solid var(--hair); color:var(--grey); text-decoration:none; font-size:16px; transition:.25s;}
-        .more-arrow:hover{border-color:var(--goldhair); color:var(--gold);}
+        .more-arrow{width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+          border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.02); color:var(--white);
+          cursor:pointer; font-size:18px; font-family:inherit; transition:.25s;}
+        .more-arrow:hover{border-color:var(--goldhair); color:var(--gold); background:rgba(201,169,110,.08);}
         .more-row{display:flex; gap:16px; overflow-x:auto; padding-bottom:8px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;}
         .more-row::-webkit-scrollbar{height:0;}
         .more-tile{flex:0 0 auto; width:150px; text-decoration:none; scroll-snap-align:start;}
