@@ -258,7 +258,7 @@ export const ARTWORKS: Artwork[] = [
   {
     id: "silver-bark",
     title: "Silver Bark",
-    location: "Forest · Switzerland",
+    location: "La Gruyère · Switzerland",
     year: "2025",
     editions: "5 + 2 AP",
     isTwin: false,
@@ -267,7 +267,7 @@ export const ARTWORKS: Artwork[] = [
       twin: "/ONEARTPIX_OLI03878_ED_WEBP.webp",
     },
     description:
-      "Bark reduced to pure line and texture. Nature's own quiet abstraction.",
+      "Ice crystallised into fine silver filaments — a frozen abstraction that echoes the grain of ancient wood.",
   },
 ];
 
