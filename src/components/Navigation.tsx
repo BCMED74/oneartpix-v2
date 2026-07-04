@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
    ============================================================ */
 
 const LEFT = [
-  { label: "Collection", href: "/#collection" },
+ { label: "Collection", href: "/collection" },
   { label: "The Twins", href: "/#collection" },
 ];
 const RIGHT = [
