@@ -5,6 +5,7 @@ import Cursor from "@/components/Cursor";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.oneartpix.com"),
   title: "OneArtPix — Where Light Meets Emotion",
   description: "Fine art photography prints. Limited editions. Signed & numbered. By appointment.",
   keywords: "fine art photography, limited edition prints, luxury art prints, Switzerland",
