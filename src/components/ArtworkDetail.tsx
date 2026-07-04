@@ -115,20 +115,24 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         <img key={bigSrc} src={bigSrc} alt={artwork.title} className="art" />
         <span className="caption">{artwork.location}</span>
 
-        {/* Vignettes in-situ — visibles uniquement si l'œuvre a des photos de mise en situation */}
+        {/* Galerie de l'œuvre : flèches + compteur + vignettes (actif dès qu'il y a plusieurs images) */}
         {gallery.length > 1 && (
-          <div className="thumbs">
-            {gallery.map((g, i) => (
-              <button key={i} className={"thumb" + (galleryIdx === i ? " on" : "")}
-                onClick={() => setGalleryIdx(i)} aria-label={i === 0 ? "The artwork" : `In-situ ${i}`}>
-                <img src={g} alt="" />
-              </button>
-            ))}
-          </div>
+          <>
+            <button className="garrow l" aria-label="Previous image"
+              onClick={() => setGalleryIdx((i) => (i - 1 + gallery.length) % gallery.length)}>‹</button>
+            <button className="garrow r" aria-label="Next image"
+              onClick={() => setGalleryIdx((i) => (i + 1) % gallery.length)}>›</button>
+            <span className="counter">{galleryIdx + 1} / {gallery.length}</span>
+            <div className="thumbs">
+              {gallery.map((g, i) => (
+                <button key={i} className={"thumb" + (galleryIdx === i ? " on" : "")}
+                  onClick={() => setGalleryIdx(i)} aria-label={i === 0 ? "The artwork" : `View ${i + 1}`}>
+                  <img src={g} alt="" />
+                </button>
+              ))}
+            </div>
+          </>
         )}
-
-        <Link href={`/collection/${prevId}`} aria-label="Previous artwork" className="arrow l">‹</Link>
-        <Link href={`/collection/${nextId}`} aria-label="Next artwork" className="arrow r">›</Link>
       </div>
 
       {/* DÉTAILS */}
@@ -215,14 +219,20 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           </div>
         </div>
 
-        {/* ===== EXPLORE THE COLLECTION — mini-carrousel des autres œuvres (même mécanique) ===== */}
+        {/* ===== EXPLORE THE COLLECTION — vignettes uniformes + nav œuvres ===== */}
         {others.length > 0 && (
           <div className="more">
-            <p className="more-lbl">Explore the Collection</p>
+            <div className="more-head">
+              <p className="more-lbl">Explore the Collection</p>
+              <div className="more-nav">
+                <Link href={`/collection/${prevId}`} className="more-arrow" aria-label="Previous artwork">‹</Link>
+                <Link href={`/collection/${nextId}`} className="more-arrow" aria-label="Next artwork">›</Link>
+              </div>
+            </div>
             <div className="more-row">
               {others.map((a) => (
                 <Link key={a.id} href={`/collection/${a.id}`} className="more-tile">
-                  <img src={a.images.main} alt={a.title} />
+                  <span className="more-frame"><img src={a.images.main} alt={a.title} /></span>
                   <span className="more-name">{a.title}</span>
                 </Link>
               ))}
@@ -301,15 +311,19 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
             linear-gradient(0deg, rgba(14,17,22,.55), transparent 42%);}
         .caption{position:absolute; left:clamp(24px,3vw,42px); bottom:clamp(24px,4vh,38px); z-index:2;
           font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:var(--grey);}
-        .arrow{position:absolute; top:50%; z-index:3; width:50px; height:50px; border-radius:50%;
-          display:flex; align-items:center; justify-content:center; color:var(--white); font-size:20px;
-          text-decoration:none; background:rgba(14,17,22,.4); border:1px solid var(--hair);
+
+        /* Flèches galerie sur la grande image + compteur */
+        .garrow{position:absolute; top:50%; transform:translateY(-50%); z-index:3; width:48px; height:48px; border-radius:50%;
+          display:flex; align-items:center; justify-content:center; color:var(--white); font-size:22px; cursor:pointer;
+          background:rgba(14,17,22,.42); border:1px solid var(--hair);
           -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
-          opacity:0; transition:opacity .45s ease, transform .45s ease, border-color .3s, color .3s;}
-        .arrow.l{left:20px; transform:translateY(-50%) translateX(-6px);}
-        .arrow.r{right:20px; transform:translateY(-50%) translateX(6px);}
-        .visual:hover .arrow{opacity:1; transform:translateY(-50%);}
-        .arrow:hover{border-color:var(--goldhair); color:var(--gold);}
+          opacity:0; transition:opacity .35s ease, border-color .3s, color .3s;}
+        .garrow.l{left:20px;} .garrow.r{right:20px;}
+        .visual:hover .garrow{opacity:1;}
+        .garrow:hover{border-color:var(--goldhair); color:var(--gold);}
+        .counter{position:absolute; z-index:3; top:clamp(20px,3vh,30px); right:clamp(20px,3vw,32px);
+          font-size:10.5px; letter-spacing:.24em; color:var(--grey); background:rgba(14,17,22,.4);
+          padding:5px 11px; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);}
 
         /* Vignettes galerie in-situ */
         .thumbs{position:absolute; z-index:3; left:50%; transform:translateX(-50%); bottom:clamp(20px,3.5vh,34px);
@@ -362,14 +376,22 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         .dc-grid span{display:block; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); margin-bottom:6px;}
         .dc-grid b{font-weight:400; font-size:12.5px; color:var(--white); line-height:1.4;}
 
-        /* Mini-carrousel Explore the Collection */
-        .more{margin-top:40px; border-top:1px solid var(--hair); padding-top:30px;}
-        .more-lbl{font-size:9.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--dim); margin-bottom:18px;}
-        .more-row{display:flex; gap:14px; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch;}
-        .more-tile{flex:0 0 auto; width:150px; text-decoration:none;}
-        .more-tile img{width:150px; height:100px; object-fit:cover; display:block; filter:brightness(.72); transition:filter .35s;}
-        .more-tile:hover img{filter:brightness(1);}
-        .more-name{display:block; margin-top:10px; font-size:11px; letter-spacing:.14em; color:var(--grey); transition:color .25s;}
+        /* Carrousel "Explore the Collection" — vignettes uniformes */
+        .more{margin-top:40px; border-top:1px solid var(--hair); padding-top:26px;}
+        .more-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;}
+        .more-lbl{font-size:9.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--dim);}
+        .more-nav{display:flex; gap:8px;}
+        .more-arrow{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+          border:1px solid var(--hair); color:var(--grey); text-decoration:none; font-size:16px; transition:.25s;}
+        .more-arrow:hover{border-color:var(--goldhair); color:var(--gold);}
+        .more-row{display:flex; gap:16px; overflow-x:auto; padding-bottom:8px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;}
+        .more-row::-webkit-scrollbar{height:0;}
+        .more-tile{flex:0 0 auto; width:150px; text-decoration:none; scroll-snap-align:start;}
+        .more-frame{display:block; width:150px; height:100px; overflow:hidden; background:#0b0d11;}
+        .more-frame img{width:100%; height:100%; object-fit:cover; display:block; filter:brightness(.72); transition:filter .4s ease, transform .5s ease;}
+        .more-tile:hover .more-frame img{filter:brightness(1); transform:scale(1.04);}
+        .more-name{display:block; margin-top:10px; font-size:11px; letter-spacing:.12em; color:var(--grey);
+          white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:color .25s;}
         .more-tile:hover .more-name{color:var(--white);}
 
         .modal{position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
@@ -393,14 +415,13 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         @media (max-width:900px){
           .oap-detail{grid-template-columns:1fr;}
           .art{min-height:60vh; height:60vh;}
-          .arrow{opacity:.92; transform:translateY(-50%); width:44px; height:44px; font-size:18px;}
-          .arrow.l{transform:translateY(-50%);} .arrow.r{transform:translateY(-50%);}
           .detail{padding:36px 24px 56px; justify-content:flex-start;}
           .toprow{margin-bottom:28px;} .title{font-size:clamp(2rem,9vw,2.8rem);}
           .price{font-size:2.1rem;} .dc-grid{grid-template-columns:repeat(2,1fr);}
           .frow{grid-template-columns:1fr;}
           .thumb{width:48px; height:48px;}
-          .more-tile{width:130px;} .more-tile img{width:130px; height:86px;}
+          .garrow{opacity:.92; width:42px; height:42px; font-size:20px;}
+          .more-tile{width:130px;} .more-frame{width:130px; height:86px;}
         }
         @media (max-width:380px){ .editions{gap:16px;} }
       `}</style>
