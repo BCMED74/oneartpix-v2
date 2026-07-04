@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { type Artwork, ARTWORKS, TIERS, type TierKey, editionsFor, pairPrice } from "@/data/artworks";
+import { FORM_ENDPOINT, FORM_READY, EMAIL } from "@/data/site";
 
 /* ============================================================
    ARTWORK DETAIL — fiche produit
@@ -23,7 +24,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
   const [galleryIdx, setGalleryIdx] = useState(0); // index de la galerie in-situ (0 = l'œuvre)
 
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
 
@@ -45,6 +46,11 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
 
   const tier = TIERS[tierKey];
   const editions = editionsFor(tierKey);
+  /* Édition par défaut = 1re NON vendue */
+  useEffect(() => {
+    const firstAvail = editions.findIndex((ed) => !(artwork.sold ?? []).includes(ed.label));
+    setEditionIdx(firstAvail === -1 ? 0 : firstAvail);
+  }, [tierKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const single = editions[editionIdx].price;
   const onRequest = single === 0;
   const price = mode === "pair" ? pairPrice(single) : single;
@@ -76,14 +82,24 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
       edition: editions[editionIdx].label,
       version: versionLabel,
       price: priceLabel,
-      name: form.name, email: form.email, message: form.message,
+      name: form.name, email: form.email, phone: form.phone, message: form.message,
     };
-    try {
-      await fetch("https://formspree.io/f/info@oneartpix.com", {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
-      });
-    } catch { /* silencieux */ }
-    setSending(false); setSent(true);
+    if (FORM_READY) {
+      try {
+        const res = await fetch(FORM_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) { setSent(true); setSending(false); return; }
+      } catch { /* repli mailto ci-dessous */ }
+    }
+    const subject = encodeURIComponent(`Inquiry — ${artwork.title} · ${editions[editionIdx].label}`);
+    const body = encodeURIComponent(
+      `Artwork: ${payload.artwork}\nTier: ${payload.tier}\nEdition: ${payload.edition}\nVersion: ${payload.version}\nPrice: ${payload.price}\n\nName: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\n\n${form.message}`
+    );
+    window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
+    setSending(false);
   };
 
   const field: React.CSSProperties = {
@@ -137,11 +153,16 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         {/* Édition */}
         <p className="lbl">Edition</p>
         <div className="editions">
-          {editions.map((ed, i) => (
-            <button key={ed.label} className={"ed" + (editionIdx === i ? " on" : "")} onClick={() => setEditionIdx(i)}>
-              {ed.label.replace("/", " / ")}
-            </button>
-          ))}
+          {editions.map((ed, i) => {
+            const isSold = (artwork.sold ?? []).includes(ed.label);
+            return (
+              <button key={ed.label} disabled={isSold}
+                className={"ed" + (editionIdx === i ? " on" : "") + (isSold ? " sold" : "")}
+                onClick={() => { if (!isSold) setEditionIdx(i); }}>
+                {ed.label.replace("/", " / ")}{isSold && <em> · Sold</em>}
+              </button>
+            );
+          })}
         </div>
 
         {/* Version */}
@@ -242,12 +263,18 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
                         value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                     </div>
                   </div>
+                  <label style={{ ...flabel, marginTop: "16px" }}>Phone · optional</label>
+                  <input style={field} type="tel" placeholder="+41 …"
+                    value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
                   <label style={{ ...flabel, marginTop: "16px" }}>Your Message</label>
                   <textarea style={{ ...field, resize: "none" }} rows={4} placeholder="Tell me about your project, framing, delivery…"
                     value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
                   <button className="send" type="submit" disabled={sending}>
                     {sending ? "Sending..." : "Send Request"}
                   </button>
+                  <p style={{ textAlign: "center", marginTop: "16px", color: "#5a5955", fontSize: "10px", letterSpacing: "0.08em" }}>
+                    or email directly · <a href={`mailto:${EMAIL}`} style={{ color: "var(--gold)", textDecoration: "none" }}>{EMAIL}</a>
+                  </p>
                 </form>
               </>
             )}
@@ -308,6 +335,9 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         .ed{background:none; border:none; cursor:pointer; color:var(--dim); font-family:inherit; font-weight:400;
           font-size:13px; letter-spacing:.04em; padding:0 0 8px; border-bottom:1px solid transparent; transition:.25s;}
         .ed:hover{color:var(--grey);} .ed.on{color:var(--white); border-bottom-color:var(--goldhair);}
+        .ed.sold{color:#4a4a47; text-decoration:line-through; cursor:not-allowed;}
+        .ed.sold em{font-style:normal; text-decoration:none; color:var(--gold); font-size:8.5px;
+          letter-spacing:.2em; text-transform:uppercase; margin-left:6px; vertical-align:middle;}
 
         .toggle{display:flex; flex-wrap:wrap; gap:24px; margin-bottom:28px;}
         .toggle button{background:none; border:none; cursor:pointer; color:var(--dim); font-family:inherit; font-weight:400;
