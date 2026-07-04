@@ -25,7 +25,7 @@ export default function About() {
         <div className="relative overflow-hidden"
           style={{ aspectRatio: "16/9", maxHeight: "900px" }}>
           <img
-            src="https://oneartpix.com/wp-content/uploads/2026/05/IMG_1838_MANTA-DOUBLE-TBLX_ONEARTPIX-16-9_V3-gigapixel-standard-v2-2x_WEBP.webp"
+            src="/manta.webp"
             alt="OneArtPix — Fine Art Photography"
             className="w-full h-full object-cover"
           />
