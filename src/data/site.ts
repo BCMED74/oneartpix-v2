@@ -4,6 +4,7 @@
 
 export const EMAIL = "info@oneartpix.com";
 export const COUNTRY = "Switzerland";
+export const INSTAGRAM = "oneartpix.editions"; // handle (sans @)
 
 /* === FORMULAIRES (Formspree) ===
    Endpoint connecté à info@oneartpix.com.
