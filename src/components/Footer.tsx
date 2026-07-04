@@ -1,9 +1,9 @@
 "use client";
-import { EMAIL, COUNTRY } from "@/data/site";
+import { EMAIL, COUNTRY, INSTAGRAM } from "@/data/site";
 
 /* ============================================================
    FOOTER — global (toutes les pages)
-   Marque · pays · email · droits réservés
+   Marque · pays · Instagram · email · droits réservés
    ============================================================ */
 
 const GOLD = "#C9A96E";
@@ -26,12 +26,25 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Email + droits */}
+        {/* Instagram + Email + droits */}
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          <a href={`mailto:${EMAIL}`}
-            style={{ color: GOLD, fontSize: "12.5px", letterSpacing: "0.1em", textDecoration: "none" }}>
-            {EMAIL}
-          </a>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", justifyContent: "flex-end" }}>
+            <a href={`https://instagram.com/${INSTAGRAM}`} target="_blank" rel="noopener noreferrer"
+              aria-label="Instagram" title={`@${INSTAGRAM}`}
+              style={{ color: "#8a8983", display: "inline-flex", transition: "color .25s" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = GOLD)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#8a8983")}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+            </a>
+            <a href={`mailto:${EMAIL}`}
+              style={{ color: GOLD, fontSize: "12.5px", letterSpacing: "0.1em", textDecoration: "none" }}>
+              {EMAIL}
+            </a>
+          </div>
           <p style={{ color: "#5a5955", fontSize: "9.5px", letterSpacing: "0.22em", textTransform: "uppercase" }}>
             © 2026 OneArtPix · All rights reserved
           </p>
