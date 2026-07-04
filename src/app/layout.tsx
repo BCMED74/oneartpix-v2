@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import Cursor from "@/components/Cursor";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "OneArtPix — Where Light Meets Emotion",
@@ -27,6 +28,7 @@ export default function RootLayout({
         <Cursor />
         <Navigation />
         {children}
+        <Footer />
       </body>
     </html>
   );
