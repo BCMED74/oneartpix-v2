@@ -90,8 +90,8 @@ export const ARTWORKS: Artwork[] = [
     editions: "5 + 2 AP",
     isTwin: true,
     images: {
-      main: "https://oneartpix.com/wp-content/uploads/2026/05/DSC00341_ED_V3-gigapixel-high-fidelity-v2-2.5x_V2_PRINT-BARYTA_V2_WEBP-scaled.webp",
-      twin: "https://oneartpix.com/wp-content/uploads/2026/05/DSC00341_ED_V3-gigapixel-high-fidelity-v2-2.5x_V2_PSYCEDELIC_VERSION_WEBP.webp",
+      main: "/guardians.webp",
+      twin: "/guardians-twin.webp",
     },
     description:
       "Ancient tropical forest at the foot of Kilimanjaro. A moment suspended between earth and sky.",
@@ -104,8 +104,8 @@ export const ARTWORKS: Artwork[] = [
     editions: "5 + 2 AP",
     isTwin: true,
     images: {
-      main: "https://oneartpix.com/wp-content/uploads/2026/05/IMG_8198-copy_ED5_Tiff-gigapixel-HF_v2-2.5x_V2_BARYTA-PRINT_WEBP-scaled.webp",
-      twin: "https://oneartpix.com/wp-content/uploads/2026/05/IMG_8198_ED5_Tiff-gigapixel-HF_v2-2.5x_V2_BARYTA-PRINT-V2cont_PSYCHEDELIC_V3_WEBP-scaled.webp",
+      main: "/crossing.webp",
+      twin: "/crossing-twin.webp",
     },
     description:
       "A stolen moment at lunchtime. A lone foilboarder defying gravity between water and sky.",
@@ -118,8 +118,8 @@ export const ARTWORKS: Artwork[] = [
     editions: "5 + 2 AP",
     isTwin: true,
     images: {
-      main: "https://oneartpix.com/wp-content/uploads/2026/04/DSC04290_TOPAZ_ED_V3_TIFF_PRINT-BARYTA-WEBP.webp",
-      twin: "https://oneartpix.com/wp-content/uploads/2026/04/DSC04290_TOPAZ_ED_V2_PSYCHEDELIC_VERSION-WEBP.webp",
+      main: "/i-see-you.webp",
+      twin: "/i-see-you-twin.webp",
     },
     description:
       "The oldest glacier in the Alps — slowly disappearing. A window into something ancient and indifferent.",
@@ -155,8 +155,7 @@ export const ARTWORKS: Artwork[] = [
       "A weathered pontoon and its ladder, poised at the edge of still water. The quiet line where the lake begins.",
   },
 
-  /* ===== THE COLLECTION — œuvres Solo (image unique, pas de Twin) ===== */
-  /* Titres · lieux · textes = provisoires (classe, à affiner par Brice) */
+  /* ===== THE COLLECTION — œuvres Solo ===== */
   {
     id: "heartwood",
     title: "Heartwood",
@@ -178,7 +177,7 @@ export const ARTWORKS: Artwork[] = [
     year: "2025",
     editions: "5 + 2 AP",
     isTwin: false,
-    sold: ["1/5"],                 // 1re édition vendue
+    sold: ["1/5"],
     images: {
       main: "/ONEARTPIX_DSC02648_ED_WEBP.webp",
       twin: "/ONEARTPIX_DSC02648_ED_WEBP.webp",
