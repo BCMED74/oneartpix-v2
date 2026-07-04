@@ -10,22 +10,22 @@ import Link from "next/link";
 /* === PHOTOS DU SLIDESHOW === */
 const PHOTOS = [
   {
-    url: "https://oneartpix.com/wp-content/uploads/2026/05/DSC00341_ED_V3-gigapixel-high-fidelity-v2-2.5x_V2_PRINT-BARYTA_V2_WEBP-scaled.webp",
+    url: "/guardians.webp",
     title: "The Guardians",
     location: "Kilimanjaro · Tanzania",
   },
   {
-    url: "https://oneartpix.com/wp-content/uploads/2026/05/IMG_8198-copy_ED5_Tiff-gigapixel-HF_v2-2.5x_V2_BARYTA-PRINT_WEBP-scaled.webp",
+    url: "/crossing.webp",
     title: "The Crossing",
     location: "Lake Geneva · Switzerland",
   },
   {
-    url: "https://oneartpix.com/wp-content/uploads/2026/04/DSC04290_TOPAZ_ED_V3_TIFF_PRINT-BARYTA-WEBP.webp",
+    url: "/i-see-you.webp",
     title: "I See You",
     location: "Mer de Glace · Chamonix",
   },
   {
-    url: "https://oneartpix.com/wp-content/uploads/2026/05/DSC00341_ED_V3-gigapixel-high-fidelity-v2-2.5x_V2_PSYCEDELIC_VERSION_WEBP.webp",
+    url: "/guardians-twin.webp",
     title: "The Guardians · Twin",
     location: "Kilimanjaro · Tanzania",
   },
