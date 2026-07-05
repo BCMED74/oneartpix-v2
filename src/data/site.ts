@@ -6,11 +6,10 @@ export const EMAIL = "info@oneartpix.com";
 export const COUNTRY = "Switzerland";
 export const INSTAGRAM = "oneartpix.editions"; // handle (sans @)
 
-/* === FORMULAIRES (Formspree) ===
-   Endpoint connecté à info@oneartpix.com.
-   Pour changer : remplace l'ID après /f/ .
-   1re vraie soumission → Formspree envoie un mail de confirmation à activer. */
-export const FORM_ENDPOINT = "https://formspree.io/f/xkolkbrg";
-
-/* true dès qu'un vrai ID (≠ XXXXXXXX) est présent */
-export const FORM_READY = !FORM_ENDPOINT.includes("XXXXXXXX");
+/* === FORMULAIRES ===
+   Les demandes partent par NOTRE serveur (API /api/contact) via le SMTP
+   Infomaniak de info@oneartpix.com. Aucun tiers, SPF/DKIM OK.
+   Le mot de passe vit dans les variables d'environnement Infomaniak
+   (SMTP_USER / SMTP_PASS), jamais dans le code. */
+export const FORM_ENDPOINT = "/api/contact";
+export const FORM_READY = true;
