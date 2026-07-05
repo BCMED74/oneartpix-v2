@@ -15,10 +15,12 @@ const WHITE = "#F4F2ED";
 type Section = { key: string; title: string; sub?: string; match?: (a: Artwork) => boolean; ids?: string[] };
 
 const SECTIONS: Section[] = [
-  { key: "twins",     title: "The Twins",            sub: "Original & Chromatic Twin", match: (a) => a.isTwin },
-  { key: "ice",       title: "Ice & Frost",          sub: "Studies in cold",           ids: ["crystalline", "glacial", "hoarfrost", "first-frost"] },
-  { key: "landscape", title: "Landscapes & Nature",  sub: "Light on the land",         ids: ["daybreak", "riviera"] },
-  { key: "texture",   title: "Textures & Details",   sub: "Form, grain & abstraction", ids: ["heartwood", "silver-bark"] },
+  { key: "twins",          title: "The Twins",           sub: "Original & Chromatic Twin",   match: (a) => a.isTwin },
+  { key: "transmutations", title: "Transmutations",      sub: "Matter into art · unique pieces", ids: ["gold-river", "fragments"] },
+  { key: "ice",            title: "Ice & Frost",         sub: "Studies in cold",             ids: ["crystalline", "glacial", "hoarfrost", "first-frost", "dew"] },
+  { key: "landscape",      title: "Landscapes & Nature", sub: "Light on the land",           ids: ["daybreak", "riviera", "still-waters", "golden-valley", "above-the-clouds"] },
+  { key: "texture",        title: "Textures & Details",  sub: "Form, grain & abstraction",   ids: ["heartwood", "silver-bark", "driftwood"] },
+  { key: "living",         title: "The Living World",    sub: "Wildlife & nature",           ids: ["manta", "golden-hour", "ember"] },
 ];
 
 function buildGroups() {
