@@ -12,11 +12,13 @@ import { ARTWORKS, type Artwork } from "@/data/artworks";
 const GOLD = "#C9A96E";
 const WHITE = "#F4F2ED";
 
-type Section = { key: string; title: string; sub?: string; match?: (a: Artwork) => boolean; ids?: string[] };
+type Section = { key: string; title: string; sub?: string; intro?: string; match?: (a: Artwork) => boolean; ids?: string[] };
 
 const SECTIONS: Section[] = [
   { key: "twins",          title: "The Twins",           sub: "Original & Chromatic Twin",   match: (a) => a.isTwin },
-  { key: "transmutations", title: "Transmutations",      sub: "Matter into art · unique pieces", ids: ["gold-river", "fragments"] },
+  { key: "transmutations", title: "Transmutations",      sub: "Ongoing project · unique pieces",
+    intro: "An ongoing project. Each photograph is printed on plexiglass, then physically transformed — molten metal (gold, silver, copper) is poured onto the surface to trace veins of light, or the image is recut into a mosaic of fragments. The aim is simple: turn a single photograph into a unique, hand-finished object. Works in progress — each piece is one of a kind, available on request.",
+    ids: ["gold-river", "fragments"] },
   { key: "ice",            title: "Ice & Frost",         sub: "Studies in cold",             ids: ["crystalline", "glacial", "hoarfrost", "first-frost", "dew"] },
   { key: "landscape",      title: "Landscapes & Nature", sub: "Light on the land",           ids: ["daybreak", "riviera", "still-waters", "golden-valley", "above-the-clouds"] },
   { key: "texture",        title: "Textures & Details",  sub: "Form, grain & abstraction",   ids: ["heartwood", "silver-bark", "driftwood"] },
@@ -50,11 +52,12 @@ export default function CollectionPage() {
       </header>
 
       {groups.map((g) => (
-        <section key={g.key} className="cat">
+        <section key={g.key} id={g.key} className="cat">
           <div className="cat-head">
             {g.sub && <p className="cat-eyebrow">{g.sub}</p>}
             <h2 className="cat-title">{g.title}</h2>
           </div>
+          {g.intro && <p className="cat-intro">{g.intro}</p>}
           <div className="grid">
             {g.works.map((art) => {
               const sold = art.sold ?? [];
@@ -90,10 +93,11 @@ export default function CollectionPage() {
         .eyebrow{color:var(--gold); font-size:10.5px; letter-spacing:.34em; text-transform:uppercase; margin-bottom:16px;}
         .title{font-weight:300; font-size:clamp(2.4rem,5vw,4rem); letter-spacing:-.02em; line-height:1;}
         .sub{margin-top:18px; color:var(--dim); font-size:12px; letter-spacing:.14em;}
-        .cat{max-width:1400px; margin:0 auto; padding-top:clamp(48px,7vh,84px);}
+        .cat{max-width:1400px; margin:0 auto; padding-top:clamp(48px,7vh,84px); scroll-margin-top:96px;}
         .cat-head{margin-bottom:clamp(24px,3.5vh,40px); border-top:1px solid var(--hair); padding-top:26px;}
         .cat-eyebrow{color:var(--dim); font-size:9.5px; letter-spacing:.3em; text-transform:uppercase; margin-bottom:10px;}
         .cat-title{font-weight:300; font-size:clamp(1.5rem,3vw,2.2rem); letter-spacing:-.01em; color:var(--white);}
+        .cat-intro{max-width:64ch; margin:2px 0 30px; color:var(--grey); font-size:13.5px; line-height:1.75;}
         .grid{display:grid; gap:clamp(20px,2.4vw,40px); grid-template-columns:repeat(3, 1fr);}
         .tile{text-decoration:none; color:inherit; display:block;}
         .frame{position:relative; overflow:hidden; background:#0b0d11; aspect-ratio:4/3;}
