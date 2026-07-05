@@ -1,7 +1,7 @@
 /* ============================================================
    API — /api/contact  ·  ⚠️ VERSION DEBUG (temporaire)
-   Renvoie l'erreur SMTP réelle + vérifie la lecture de l'env.
-   À remettre en version normale une fois le souci réglé.
+   Mot de passe SMTP stocké en Base64 (SMTP_PASS_B64) pour éviter
+   tout souci de caractère spécial dans le fichier .env.
    ============================================================ */
 
 import { NextResponse } from "next/server";
@@ -10,13 +10,20 @@ import nodemailer from "nodemailer";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/* === GET (debug) === l'env est-il bien lu ? (ne révèle pas le mot de passe) */
+/* === Décode le mot de passe Base64 (repli sur SMTP_PASS en clair si besoin) === */
+function smtpPass(): string {
+  const b64 = process.env.SMTP_PASS_B64;
+  if (b64) return Buffer.from(b64, "base64").toString("utf8");
+  return process.env.SMTP_PASS ?? "";
+}
+
+/* === GET (debug) === contrôle sans révéler le mot de passe === */
 export async function GET() {
+  const pass = smtpPass();
   return NextResponse.json({
-    smtpUser: process.env.SMTP_USER ?? null,            // l'adresse n'est pas secrète
+    smtpUser: process.env.SMTP_USER ?? null,
     smtpUserSet: Boolean(process.env.SMTP_USER),
-    smtpPassSet: Boolean(process.env.SMTP_PASS),
-    smtpPassLength: process.env.SMTP_PASS?.length ?? 0, // longueur seulement
+    passDecodedLength: pass.length,          // doit correspondre à la longueur réelle de ton mot de passe
   });
 }
 
@@ -42,11 +49,10 @@ export async function POST(req: Request) {
       host: "mail.infomaniak.com",
       port: 465,
       secure: true,
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      auth: { user: process.env.SMTP_USER, pass: smtpPass() },
     });
 
-    /* DEBUG : teste la connexion + l'auth AVANT d'envoyer */
-    await transporter.verify();
+    await transporter.verify(); // DEBUG : teste l'auth avant l'envoi
 
     await transporter.sendMail({
       from: `"OneArtPix" <${process.env.SMTP_USER}>`,
@@ -58,18 +64,11 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    /* DEBUG : renvoie l'erreur réelle (à retirer ensuite) */
-    const e = err as { message?: string; code?: string; command?: string; responseCode?: number; response?: string };
+    const e = err as { message?: string; code?: string; responseCode?: number; response?: string };
     console.error("[/api/contact] échec :", err);
     return NextResponse.json({
       error: "Envoi impossible.",
-      debug: {
-        message: e?.message ?? String(err),
-        code: e?.code ?? null,
-        command: e?.command ?? null,
-        responseCode: e?.responseCode ?? null,
-        response: e?.response ?? null,
-      },
+      debug: { message: e?.message ?? String(err), code: e?.code ?? null, responseCode: e?.responseCode ?? null, response: e?.response ?? null },
     }, { status: 500 });
   }
 }
