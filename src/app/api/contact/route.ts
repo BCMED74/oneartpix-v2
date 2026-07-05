@@ -1,20 +1,26 @@
 /* ============================================================
-   API — /api/contact
-   Reçoit le formulaire (JSON) et envoie l'e-mail via le SMTP
-   Infomaniak authentifié info@oneartpix.com (SPF/DKIM OK).
-   App Router · runtime Node (nodemailer ne tourne pas en Edge).
+   API — /api/contact  ·  ⚠️ VERSION DEBUG (temporaire)
+   Renvoie l'erreur SMTP réelle + vérifie la lecture de l'env.
+   À remettre en version normale une fois le souci réglé.
    ============================================================ */
 
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
-/* === RUNTIME === Node + rendu dynamique (jamais mis en cache). */
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/* === CHAMPS PRIORITAIRES === ordre d'affichage en tête de l'e-mail. */
-const PRIORITY = ["artwork", "tier", "edition", "version", "price", "name", "email", "phone", "message"];
+/* === GET (debug) === l'env est-il bien lu ? (ne révèle pas le mot de passe) */
+export async function GET() {
+  return NextResponse.json({
+    smtpUser: process.env.SMTP_USER ?? null,            // l'adresse n'est pas secrète
+    smtpUserSet: Boolean(process.env.SMTP_USER),
+    smtpPassSet: Boolean(process.env.SMTP_PASS),
+    smtpPassLength: process.env.SMTP_PASS?.length ?? 0, // longueur seulement
+  });
+}
 
+const PRIORITY = ["artwork", "tier", "edition", "version", "price", "name", "email", "phone", "message"];
 const LABELS: Record<string, string> = {
   artwork: "Artwork", tier: "Tier", edition: "Edition", version: "Version",
   price: "Price", name: "Name", email: "Email", phone: "Phone", message: "Message",
@@ -22,57 +28,48 @@ const LABELS: Record<string, string> = {
 
 export async function POST(req: Request) {
   try {
-    /* === 1. LECTURE DU CORPS (JSON) === */
     const data = (await req.json()) as Record<string, string>;
-
     const visitorEmail = (data.email || "").trim();
-    if (!visitorEmail) {
-      return NextResponse.json({ error: "Email requis." }, { status: 400 });
-    }
+    if (!visitorEmail) return NextResponse.json({ error: "Email requis." }, { status: 400 });
 
-    /* === 2. MISE EN FORME === champs prioritaires présents, puis le reste. */
     const keys = [
       ...PRIORITY.filter((k) => data[k]),
       ...Object.keys(data).filter((k) => !PRIORITY.includes(k) && data[k]),
     ];
     const textBody = keys.map((k) => `${LABELS[k] ?? k}: ${data[k]}`).join("\n");
-    const htmlBody = keys
-      .map((k) => `<p style="margin:4px 0"><strong>${LABELS[k] ?? k} :</strong> ${escapeHtml(data[k])}</p>`)
-      .join("");
 
-    const subject = data.artwork
-      ? `Inquiry — ${data.artwork}${data.edition ? ` · ${data.edition}` : ""}`
-      : `Contact — OneArtPix`;
-
-    /* === 3. TRANSPORT SMTP INFOMANIAK === identifiants lus dans l'env. */
     const transporter = nodemailer.createTransport({
       host: "mail.infomaniak.com",
       port: 465,
-      secure: true, // 465 = SSL direct
-      auth: {
-        user: process.env.SMTP_USER, // info@oneartpix.com
-        pass: process.env.SMTP_PASS, // mot de passe de la boîte info@
-      },
+      secure: true,
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
     });
 
-    /* === 4. ENVOI === from = adresse authentifiée · replyTo = visiteur. */
+    /* DEBUG : teste la connexion + l'auth AVANT d'envoyer */
+    await transporter.verify();
+
     await transporter.sendMail({
       from: `"OneArtPix" <${process.env.SMTP_USER}>`,
       to: process.env.SMTP_USER,
       replyTo: `"${data.name || "Visitor"}" <${visitorEmail}>`,
-      subject,
+      subject: data.artwork ? `Inquiry — ${data.artwork}` : `Contact — OneArtPix`,
       text: textBody,
-      html: `<div style="font-family:Inter,Arial,sans-serif;font-size:14px;color:#0E1116">${htmlBody}</div>`,
     });
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[/api/contact] envoi échoué :", err);
-    return NextResponse.json({ error: "Envoi impossible." }, { status: 500 });
+    /* DEBUG : renvoie l'erreur réelle (à retirer ensuite) */
+    const e = err as { message?: string; code?: string; command?: string; responseCode?: number; response?: string };
+    console.error("[/api/contact] échec :", err);
+    return NextResponse.json({
+      error: "Envoi impossible.",
+      debug: {
+        message: e?.message ?? String(err),
+        code: e?.code ?? null,
+        command: e?.command ?? null,
+        responseCode: e?.responseCode ?? null,
+        response: e?.response ?? null,
+      },
+    }, { status: 500 });
   }
-}
-
-/* === UTILITAIRE === échappe le HTML pour l'e-mail. */
-function escapeHtml(s: string) {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
