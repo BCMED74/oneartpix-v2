@@ -14,6 +14,7 @@ export type Artwork = {
   images: { main: string; twin: string };
   room?: string[];              // photos de mise en situation (in-situ) — optionnel
   sold?: string[];              // éditions déjà vendues, ex: ["1/5"] — barré + grisé
+  onRequest?: boolean;          // true => "Price on request" (contact pour infos)
   description: string;
 };
 
@@ -122,7 +123,7 @@ export const ARTWORKS: Artwork[] = [
       twin: "/i-see-you-twin.webp",
     },
     description:
-      "The oldest glacier in the Alps — slowly disappearing. A window into something ancient and indifferent.",
+      "Ancient ice cave — a gateway into the depths of the Mer de Glace, the largest glacier in France (7 km long), born of the Leschaux and Géant glaciers.",
   },
 
   /* ===== NOUVELLES ŒUVRES — Lac Léman (Twins) ===== */
@@ -159,7 +160,7 @@ export const ARTWORKS: Artwork[] = [
   {
     id: "heartwood",
     title: "Heartwood",
-    location: "Valais · Switzerland",
+    location: "Languedoc-Roussillon · France",
     year: "2025",
     editions: "5 + 2 AP",
     isTwin: false,
@@ -172,8 +173,8 @@ export const ARTWORKS: Artwork[] = [
   },
   {
     id: "riviera",
-    title: "Riviera",
-    location: "Camogli · Italy",
+    title: "Bagni Lido",
+    location: "Camogli · Italy · Riviera Ligure",
     year: "2025",
     editions: "5 + 2 AP",
     isTwin: false,
@@ -183,12 +184,12 @@ export const ARTWORKS: Artwork[] = [
       twin: "/ONEARTPIX_DSC02648_ED_WEBP.webp",
     },
     description:
-      "A Ligurian morning above the shore. Colour, light, and the slow rhythm of the sea.",
+      "Bagni Lido Camogli — Tigullio beaches, the most beautiful sea on the Eastern Riviera.",
   },
   {
     id: "daybreak",
     title: "Daybreak",
-    location: "Corsica · France",
+    location: "Piana · Corsica · France",
     year: "2025",
     editions: "5 + 2 AP",
     isTwin: false,
@@ -197,7 +198,7 @@ export const ARTWORKS: Artwork[] = [
       twin: "/ONEARTPIX_DSC07002_ED_WEBP.webp",
     },
     description:
-      "First light breaking over the ridgeline. The valley waking in gold and mist.",
+      "Magnificent sunrise over the pink-granite Corsican mountains of the Piana Valley, from the Osini Pass.",
   },
   {
     id: "crystalline",
@@ -268,6 +269,81 @@ export const ARTWORKS: Artwork[] = [
     },
     description:
       "Ice crystallised into fine silver filaments — a frozen abstraction that echoes the grain of ancient wood.",
+  },
+  /* ===== THE LIVING WORLD ===== */
+  {
+    id: "manta",
+    title: "Double Manta",
+    location: "Hanifaru Bay · Maldives",
+    year: "2025",
+    editions: "5 + 2 AP",
+    isTwin: false,
+    images: {
+      main: "/manta.webp",
+      twin: "/manta.webp",
+    },
+    description:
+      "Hanifaru Bay, a unique site in the Maldives and a hotspot for reef manta rays (Mobula alfredi). The shape of the bay and the ocean currents converge into an abundance of plankton, drawing hundreds of mantas.",
+  },
+  /* ===== TRANSMUTATIONS — pièces uniques (photo transformée) ===== */
+  {
+    id: "gold-river", title: "Gold River", location: "Plexiglass · Molten Gold",
+    year: "2025", editions: "1 / 1", isTwin: false, onRequest: true,
+    images: { main: "/gold-river.webp", twin: "/gold-river.webp" },
+    room: ["/the-summit.webp", "/insitu-gold-river.webp"],
+    description: "Unique piece — a black-mountain photograph printed on plexiglass, hand-finished with molten gold traced into a single luminous vein. One of a kind.",
+  },
+  {
+    id: "fragments", title: "Fragments", location: "Photographic Mosaic",
+    year: "2025", editions: "1 / 1", isTwin: false, onRequest: true,
+    images: { main: "/gold-river-mosaic.webp", twin: "/gold-river-mosaic.webp" },
+    room: ["/the-summit.webp"],
+    description: "Unique piece — the same summit, recut and reassembled into a mosaic of coloured fragments. One of a kind.",
+  },
+
+  /* ===== NOUVELLES ŒUVRES — Price on request ===== */
+  {
+    id: "golden-hour", title: "Golden Hour", location: "Alpine Lake · Switzerland",
+    year: "2025", editions: "5 + 2 AP", isTwin: false, onRequest: true,
+    images: { main: "/golden-hour.webp", twin: "/golden-hour.webp" },
+    description: "Limited-edition fine art print. Contact for details, sizes and availability.",
+  },
+  {
+    id: "ember", title: "Ember", location: "Flora · Study",
+    year: "2025", editions: "5 + 2 AP", isTwin: false, onRequest: true,
+    images: { main: "/ember.webp", twin: "/ember.webp" },
+    room: ["/insitu-ember.webp"],
+    description: "Limited-edition fine art print. Contact for details, sizes and availability.",
+  },
+  {
+    id: "still-waters", title: "Still Waters", location: "Lake Skadar · Montenegro",
+    year: "2025", editions: "5 + 2 AP", isTwin: false, onRequest: true,
+    images: { main: "/still-waters.webp", twin: "/still-waters.webp" },
+    description: "Limited-edition fine art print. Contact for details, sizes and availability.",
+  },
+  {
+    id: "golden-valley", title: "Golden Valley", location: "Durmitor · Montenegro",
+    year: "2025", editions: "5 + 2 AP", isTwin: false, onRequest: true,
+    images: { main: "/golden-valley.webp", twin: "/golden-valley.webp" },
+    description: "Limited-edition fine art print. Contact for details, sizes and availability.",
+  },
+  {
+    id: "above-the-clouds", title: "Above the Clouds", location: "Kilimanjaro · Tanzania",
+    year: "2025", editions: "5 + 2 AP", isTwin: false, onRequest: true,
+    images: { main: "/above-the-clouds.webp", twin: "/above-the-clouds.webp" },
+    description: "Limited-edition fine art print. Contact for details, sizes and availability.",
+  },
+  {
+    id: "driftwood", title: "Driftwood", location: "Nature · Detail",
+    year: "2025", editions: "5 + 2 AP", isTwin: false, onRequest: true,
+    images: { main: "/driftwood.webp", twin: "/driftwood.webp" },
+    description: "Limited-edition fine art print. Contact for details, sizes and availability.",
+  },
+  {
+    id: "dew", title: "Dew", location: "Nature · Detail",
+    year: "2025", editions: "5 + 2 AP", isTwin: false, onRequest: true,
+    images: { main: "/dew.webp", twin: "/dew.webp" },
+    description: "Limited-edition fine art print. Contact for details, sizes and availability.",
   },
 ];
 
