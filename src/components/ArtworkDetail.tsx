@@ -54,7 +54,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
     setEditionIdx(firstAvail === -1 ? 0 : firstAvail);
   }, [tierKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const single = editions[editionIdx].price;
-  const onRequest = single === 0;
+ const onRequest = single === 0 || !!artwork.onRequest;
   const price = mode === "pair" ? pairPrice(single) : single;
   const idx = Math.max(0, ARTWORKS.findIndex((a) => a.id === artwork.id));
   const pad = (n: number) => String(n).padStart(2, "0");
