@@ -7,8 +7,9 @@ import { useEffect, useState } from "react";
    ============================================================ */
 
 const LEFT = [
- { label: "Collection", href: "/collection" },
+  { label: "Collection", href: "/collection" },
   { label: "The Twins", href: "/#collection" },
+  { label: "Transmutations", href: "/collection#transmutations" },
 ];
 const RIGHT = [
   { label: "About", href: "/#about" },
@@ -28,7 +29,7 @@ export default function Navigation() {
   }, []);
 
   const linkStyle: React.CSSProperties = {
-    color: "rgba(244,242,237,0.78)", letterSpacing: "0.22em", fontSize: "10.5px",
+    color: "rgba(244,242,237,0.82)", letterSpacing: "0.16em", fontSize: "12px",
     textTransform: "uppercase", textDecoration: "none",
   };
   const hov = (e: React.MouseEvent<HTMLAnchorElement>, on: boolean) =>
@@ -78,13 +79,13 @@ export default function Navigation() {
             paddingTop: "9px", paddingBottom: "9px", minHeight: "44px",
           }}
         >
-          <div className="hidden md:flex" style={{ gap: "34px", justifyContent: "flex-start" }}>
+          <div className="hidden md:flex" style={{ gap: "24px", justifyContent: "flex-start" }}>
             {LEFT.map((item) => renderLink(item, item.label))}
           </div>
 
           <span aria-hidden style={{ display: "block", width: "1px" }} />
 
-          <div className="hidden md:flex" style={{ gap: "34px", justifyContent: "flex-end" }}>
+          <div className="hidden md:flex" style={{ gap: "24px", justifyContent: "flex-end" }}>
             {RIGHT.map((item) => renderLink(item, item.label))}
           </div>
 
