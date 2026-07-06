@@ -22,6 +22,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
   const [editionIdx, setEditionIdx] = useState(0);
   const [mode, setMode] = useState<"single" | "pair">("single");
   const [galleryIdx, setGalleryIdx] = useState(0); // index de la galerie in-situ (0 = l'œuvre)
+  const [lightbox, setLightbox] = useState(false); // zoom plein écran de l'image affichée
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
@@ -36,12 +37,15 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
     }
   }, [artwork.isTwin]);
 
+  /* Overlays (Inquire + Lightbox) : Échap ferme, scroll de fond bloqué */
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setOpen(false); setLightbox(false); }
+    };
     document.addEventListener("keydown", onKey);
-    document.body.style.overflow = open ? "hidden" : "";
+    document.body.style.overflow = (open || lightbox) ? "hidden" : "";
     return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
-  }, [open]);
+  }, [open, lightbox]);
 
   /* Galerie in-situ : revenir à l'image de l'œuvre quand la version change */
   useEffect(() => { setGalleryIdx(0); }, [showTwin, mode]);
@@ -54,7 +58,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
     setEditionIdx(firstAvail === -1 ? 0 : firstAvail);
   }, [tierKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const single = editions[editionIdx].price;
- const onRequest = single === 0 || !!artwork.onRequest;
+  const onRequest = single === 0 || !!artwork.onRequest;
   const price = mode === "pair" ? pairPrice(single) : single;
   const idx = Math.max(0, ARTWORKS.findIndex((a) => a.id === artwork.id));
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -114,7 +118,9 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
     <section className="oap-detail">
       {/* IMAGE */}
       <div className="visual">
-        <img key={bigSrc} src={bigSrc} alt={artwork.title} className="art" />
+        <img key={bigSrc} src={bigSrc} alt={artwork.title}
+          className={"art" + (galleryIdx === 0 ? " fit" : "")}
+          onClick={() => setLightbox(true)} />
         <span className="caption">{artwork.location}</span>
 
         {/* Galerie de l'œuvre : flèches + compteur + vignettes (actif dès qu'il y a plusieurs images) */}
@@ -136,6 +142,14 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           </>
         )}
       </div>
+
+      {/* LIGHTBOX — image en plein écran (clic n'importe où ou Échap pour fermer) */}
+      {lightbox && (
+        <div className="lightbox" onClick={() => setLightbox(false)} role="dialog" aria-modal="true">
+          <button className="lb-close" aria-label="Close">×</button>
+          <img src={bigSrc} alt={artwork.title} />
+        </div>
+      )}
 
       {/* DÉTAILS */}
       <div className="detail">
@@ -303,9 +317,15 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
         }
         .eyebrow{font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:var(--dim); font-weight:400;}
         .visual{position:relative; overflow:hidden; background:#0b0d11; min-width:0;}
-        .art{width:100%; height:100%; min-height:100vh; object-fit:cover; display:block;
-             transform:scale(1.04); animation:kenburns 28s ease-out forwards;}
-        @keyframes kenburns{to{transform:scale(1.12);}}
+        /* Image principale : COUVRE par défaut (photos in-situ plein cadre), mais l'ŒUVRE
+           (.fit) est affichée EN ENTIER (contain) pour qu'on la voie complètement.
+           Clic = ouverture plein écran (curseur loupe).
+           Apparition en fondu doux (SANS zoom → l'œuvre n'est jamais recadrée) ;
+           se re-déclenche à chaque image grâce au key={bigSrc}. */
+        .art{width:100%; height:100%; min-height:100vh; object-fit:cover; display:block; cursor:zoom-in;
+          animation:artin 1.1s cubic-bezier(.2,.7,.2,1) both;}
+        .art.fit{object-fit:contain; background:#0b0d11;}
+        @keyframes artin{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
         .visual::after{content:""; position:absolute; inset:0; pointer-events:none;
           background:
             linear-gradient(180deg, rgba(14,17,22,.55), transparent 16%),
@@ -334,6 +354,19 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           background:#0b0d11; border:1px solid rgba(255,255,255,.28); transition:opacity .3s, border-color .3s;}
         .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
         .thumb:hover{opacity:1;} .thumb.on{opacity:1; border-color:var(--goldhair);}
+
+        /* === LIGHTBOX — image en plein écran === */
+        .lightbox{position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
+          background:rgba(8,10,13,.94); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);
+          cursor:zoom-out; padding:clamp(16px,4vw,56px); animation:lbfade .25s ease;}
+        .lightbox img{max-width:100%; max-height:100%; object-fit:contain; display:block;
+          box-shadow:0 30px 90px rgba(0,0,0,.6);}
+        .lb-close{position:absolute; top:clamp(16px,3vh,28px); right:clamp(16px,3vw,32px); z-index:2;
+          width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.06); border:1px solid var(--hair);
+          color:var(--white); font-size:26px; line-height:1; cursor:pointer; display:flex; align-items:center;
+          justify-content:center; transition:border-color .3s, color .3s;}
+        .lb-close:hover{border-color:var(--goldhair); color:var(--gold);}
+        @keyframes lbfade{from{opacity:0;} to{opacity:1;}}
 
         .detail{display:flex; flex-direction:column; justify-content:center; min-width:0;
           padding:clamp(96px,8vh,120px) clamp(32px,4vw,72px) clamp(48px,7vh,80px);}
@@ -414,6 +447,11 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           font-size:10.5px; letter-spacing:.3em; text-transform:uppercase; font-weight:500; cursor:pointer; font-family:inherit; transition:.3s;}
         .send:hover{background:var(--gold); border-color:var(--gold);}
         .ok{color:var(--gold); text-align:center; padding:44px 0; font-size:15px; letter-spacing:.14em; line-height:1.7;}
+
+        /* Accessibilité : pas d'animation si l'utilisateur les a désactivées dans son OS */
+        @media (prefers-reduced-motion: reduce){
+          .art{animation:none;}
+        }
 
         @media (max-width:900px){
           .oap-detail{grid-template-columns:1fr;}
