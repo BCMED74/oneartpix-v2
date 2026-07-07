@@ -153,16 +153,19 @@ export default function ProjectPage({
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
 
-        /* Diptyque "Option A" — deux tirages recadrés PORTRAIT, superposés & décalés.
-           object-fit:cover → même présentation généreuse pour horizontales ET verticales. */
-        .diptych{ display:grid; grid-template-columns:repeat(12,1fr); align-items:start; }
-        .dip{ position:relative; overflow:hidden; background:#0b0d11; box-shadow:0 30px 72px rgba(0,0,0,.55); }
-        .dip img{ width:100%; height:100%; object-fit:cover; display:block; filter:brightness(.92);
-          transition:filter .6s ease, transform 1.1s cubic-bezier(.4,0,.2,1); }
+        /* Diptyque "Option A" — deux tirages recadrés PORTRAIT (4:5), superposés & décalés.
+           Boîte portrait GARANTIE via padding-top ; l'image remplit en object-fit:cover.
+           → même présentation généreuse pour horizontales ET verticales. */
+        .diptych{ display:flex; align-items:flex-start; }
+        .dip{ position:relative; width:58%; flex:0 0 58%; overflow:hidden; background:#0b0d11;
+          box-shadow:0 30px 72px rgba(0,0,0,.55); }
+        .dip::before{ content:""; display:block; padding-top:125%; }        /* 4:5 portrait */
+        .dip img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+          filter:brightness(.92); transition:filter .6s ease, transform 1.1s cubic-bezier(.4,0,.2,1); }
         .dip:hover img{ filter:brightness(1); transform:scale(1.05); }
-        .dip.a{ grid-column:1 / 8; aspect-ratio:4 / 5; z-index:1; }
-        .dip.b{ grid-column:6 / 13; aspect-ratio:4 / 5; margin-top:20%; z-index:2; }  /* chevauche + descend */
-        .dip:hover{ z-index:3; }                                                       /* l'image survolée passe devant */
+        .dip.a{ z-index:1; }
+        .dip.b{ margin-left:-16%; margin-top:13%; z-index:2; }               /* chevauche + descend */
+        .dip:hover{ z-index:3; }                                             /* l'image survolée passe devant */
         .dip-tag{ position:absolute; left:10px; bottom:10px; z-index:2; color:var(--gold);
           font-size:8px; letter-spacing:.2em; text-transform:uppercase; padding:4px 9px;
           background:rgba(14,17,22,.55); border:1px solid rgba(201,169,110,.4);
@@ -197,7 +200,7 @@ export default function ProjectPage({
           .work{ grid-template-columns:1fr; gap:24px; }
           .work.flip{ grid-template-columns:1fr; }
           .media, .work-txt, .work.flip .media, .work.flip .work-txt{ grid-column:auto; }
-          .dip.b{ margin-top:15%; }
+          .dip.b{ margin-top:11%; }
           .phero{ min-height:74vh; }
         }
       `}</style>
