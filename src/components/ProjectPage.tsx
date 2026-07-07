@@ -6,8 +6,9 @@ import { type Artwork } from "@/data/artworks";
    PROJECT PAGE — page "univers" dédiée à un projet
    (The Twins, Transmutations…).
    Hero plein écran + texte d'intro + vidéo optionnelle +
-   ŒUVRES EN ÉDITORIAL ALTERNÉ (grand visuel / texte minimal,
-   gauche-droite) + liens vers les autres univers.
+   ŒUVRES EN ÉDITORIAL ALTERNÉ (grand visuel / texte minimal).
+   • Œuvre "Twin" (isTwin)  → DIPTYQUE décalé : Original + Chromatic Twin
+   • Œuvre unique           → image seule
    L'image commande, le texte chuchote — jamais "blog".
    ============================================================ */
 
@@ -56,24 +57,39 @@ export default function ProjectPage({
         </section>
       )}
 
-      {/* ===== ŒUVRES — ÉDITORIAL ALTERNÉ (grand visuel + texte minimal) ===== */}
+      {/* ===== ŒUVRES — ÉDITORIAL ALTERNÉ ===== */}
       <section className="pworks">
         {works.map((art, i) => {
           const sold = art.sold ?? [];
+          const isTwin = art.isTwin && !!art.images.twin;
           return (
             <article key={art.id} className={"work" + (i % 2 ? " flip" : "")}>
-              {/* Grand visuel — cliquable vers la fiche produit */}
-              <Link href={`/collection/${art.id}`} className="work-img" aria-label={art.title}>
-                <img src={art.images.main} alt={art.title} loading="lazy" />
-              </Link>
+              {/* Média : DIPTYQUE (twin) ou image seule (unique) */}
+              {isTwin ? (
+                <div className="diptych">
+                  <Link href={`/collection/${art.id}`} className="dip a" aria-label={`${art.title} — Original`}>
+                    <img src={art.images.main} alt={`${art.title} — Original`} loading="lazy" />
+                    <span className="dip-tag">Original</span>
+                  </Link>
+                  <Link href={`/collection/${art.id}?v=twin`} className="dip b" aria-label={`${art.title} — Chromatic Twin`}>
+                    <img src={art.images.twin} alt={`${art.title} — Chromatic Twin`} loading="lazy" />
+                    <span className="dip-tag">Chromatic Twin ✦</span>
+                  </Link>
+                </div>
+              ) : (
+                <Link href={`/collection/${art.id}`} className="work-img" aria-label={art.title}>
+                  <img src={art.images.main} alt={art.title} loading="lazy" />
+                </Link>
+              )}
+
               {/* Texte minimal */}
               <div className="work-txt">
                 <span className="work-no">{pad(i + 1)} — {art.location}</span>
                 <h2 className="work-title">{art.title}</h2>
                 <p className="work-desc">{art.description}</p>
                 {sold.length > 0 && <p className="work-sold">{sold[0]} · Sold</p>}
-                <Link href={`/collection/${art.id}`} className="work-link">
-                  View the piece <i>→</i>
+                <Link href={`/collection/${art.id}`} className="work-cta">
+                  {isTwin ? "Discover the pair" : "Discover the piece"} <i>→</i>
                 </Link>
               </div>
             </article>
@@ -123,25 +139,41 @@ export default function ProjectPage({
         /* ===== ŒUVRES — éditorial alterné ===== */
         .pworks{ max-width:1300px; margin:0 auto;
           padding:clamp(70px,11vh,150px) clamp(24px,5vw,72px) clamp(40px,6vh,80px);
-          display:flex; flex-direction:column; gap:clamp(72px,13vh,168px); }
+          display:flex; flex-direction:column; gap:clamp(80px,14vh,180px); }
         .work{ display:grid; grid-template-columns:1.12fr .88fr; gap:clamp(28px,5vw,80px); align-items:center; }
-        .work.flip .work-img{ order:2; }               /* alterne : visuel à droite une ligne sur deux */
+        .work.flip .work-img, .work.flip .diptych{ order:2; }   /* alterne : visuel à droite une ligne sur deux */
 
+        /* Image seule (œuvres uniques) */
         .work-img{ display:block; overflow:hidden; background:#0b0d11; box-shadow:0 24px 70px rgba(0,0,0,.45); }
-        .work-img img{ width:100%; height:auto; display:block;         /* ratio naturel → œuvre entière, jamais coupée */
+        .work-img img{ width:100%; height:auto; display:block;   /* ratio naturel → œuvre entière */
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
 
+        /* Diptyque décalé (œuvres Twin) : Original + Chromatic Twin */
+        .diptych{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(12px,1.6vw,22px); align-items:start; }
+        .dip{ position:relative; display:block; overflow:hidden; background:#0b0d11; box-shadow:0 20px 55px rgba(0,0,0,.45); }
+        .dip img{ width:100%; height:auto; display:block; filter:brightness(.9);
+          transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
+        .dip:hover img{ filter:brightness(1); transform:scale(1.04); }
+        .dip.b{ margin-top:clamp(30px,7vw,72px); }     /* le Chromatic Twin décalé vers le bas */
+        .dip-tag{ position:absolute; left:10px; bottom:10px; z-index:2; color:var(--gold);
+          font-size:8px; letter-spacing:.2em; text-transform:uppercase; padding:4px 9px;
+          background:rgba(14,17,22,.55); border:1px solid rgba(201,169,110,.4);
+          -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); }
+
+        /* Texte minimal */
         .work-txt{ min-width:0; }
         .work-no{ display:block; color:var(--dim); font-size:10px; letter-spacing:.26em; text-transform:uppercase; margin-bottom:18px; }
         .work-title{ font-weight:300; font-size:clamp(1.9rem,3.6vw,3rem); line-height:1.03; letter-spacing:-.02em; margin-bottom:20px; }
         .work-desc{ color:var(--grey); font-weight:300; font-size:15px; line-height:1.85; max-width:44ch; margin-bottom:26px; }
         .work-sold{ color:var(--gold); font-size:9px; letter-spacing:.24em; text-transform:uppercase;
           text-decoration:line-through; text-decoration-color:rgba(201,169,110,.5); margin-bottom:22px; }
-        .work-link{ text-decoration:none; color:var(--white); font-size:10.5px; letter-spacing:.26em; text-transform:uppercase;
-          border-bottom:1px solid var(--goldhair); padding-bottom:5px; display:inline-flex; align-items:center; gap:10px; transition:color .3s; }
-        .work-link i{ font-style:normal; color:var(--gold); transition:transform .3s; }
-        .work-link:hover{ color:var(--gold); } .work-link:hover i{ transform:translateX(5px); }
+        .work-cta{ text-decoration:none; color:var(--white); font-size:10.5px; letter-spacing:.26em; text-transform:uppercase; font-weight:500;
+          display:inline-flex; align-items:center; gap:12px; padding:15px 30px; border:1px solid var(--goldhair);
+          transition:background .3s, color .3s, border-color .3s; }
+        .work-cta i{ font-style:normal; color:var(--gold); transition:transform .3s, color .3s; }
+        .work-cta:hover{ background:var(--gold); border-color:var(--gold); color:#0E1116; }
+        .work-cta:hover i{ color:#0E1116; transform:translateX(4px); }
 
         /* ===== CONTINUER ===== */
         .pmore{ max-width:1300px; margin:0 auto; padding:clamp(30px,5vh,60px) clamp(24px,5vw,72px) clamp(80px,12vh,140px);
@@ -153,10 +185,11 @@ export default function ProjectPage({
         .pm-link i{ font-style:normal; color:var(--gold); transition:transform .3s; }
         .pm-link:hover{ color:var(--gold); } .pm-link:hover i{ transform:translateX(6px); }
 
-        /* ===== MOBILE : on empile, image toujours au-dessus du texte ===== */
+        /* ===== MOBILE : on empile, visuel toujours au-dessus du texte ===== */
         @media (max-width:820px){
           .work{ grid-template-columns:1fr; gap:24px; }
-          .work.flip .work-img{ order:0; }
+          .work.flip .work-img, .work.flip .diptych{ order:0; }
+          .dip.b{ margin-top:clamp(18px,5vw,36px); }
           .phero{ min-height:74vh; }
         }
       `}</style>
