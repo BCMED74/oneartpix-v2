@@ -123,13 +123,13 @@ export default function Hero() {
               </span>
               <span style={{ color: GOLD, fontSize: "16px" }}>→</span>
             </Link>
-            <a href="#collection" className="inline-flex items-center gap-3" style={{ width: "fit-content" }}>
+           <Link href="/twins" className="inline-flex items-center gap-3" style={{ width: "fit-content" }}>
               <span style={{ color: "rgba(244,242,237,0.72)", letterSpacing: "0.28em", fontSize: "10.5px", textTransform: "uppercase",
                 borderBottom: "1px solid rgba(255,255,255,0.2)", paddingBottom: "4px" }}>
                 The Twins
               </span>
-              <span style={{ color: GOLD, fontSize: "15px" }}>↓</span>
-            </a>
+              <span style={{ color: GOLD, fontSize: "16px" }}>→</span>
+            </Link>
           </div>
         </div>
       </div>
