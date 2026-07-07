@@ -7,7 +7,7 @@ import { type Artwork } from "@/data/artworks";
    (The Twins, Transmutations…).
    Hero plein écran + texte d'intro + vidéo optionnelle +
    ŒUVRES EN ÉDITORIAL ALTERNÉ (grand visuel / texte minimal).
-   • Œuvre "Twin" (isTwin)  → DIPTYQUE décalé : Original + Chromatic Twin
+   • Œuvre "Twin" (isTwin)  → DIPTYQUE superposé : Original + Chromatic Twin
    • Œuvre unique           → image seule
    L'image commande, le texte chuchote — jamais "blog".
    ============================================================ */
@@ -65,22 +65,24 @@ export default function ProjectPage({
           return (
             <article key={art.id} className={"work" + (i % 2 ? " flip" : "")}>
               {/* Média : DIPTYQUE (twin) ou image seule (unique) */}
-              {isTwin ? (
-                <div className="diptych">
-                  <Link href={`/collection/${art.id}`} className="dip a" aria-label={`${art.title} — Original`}>
-                    <img src={art.images.main} alt={`${art.title} — Original`} loading="lazy" />
-                    <span className="dip-tag">Original</span>
+              <div className="media">
+                {isTwin ? (
+                  <div className="diptych">
+                    <Link href={`/collection/${art.id}`} className="dip a" aria-label={`${art.title} — Original`}>
+                      <img src={art.images.main} alt={`${art.title} — Original`} loading="lazy" />
+                      <span className="dip-tag">Original</span>
+                    </Link>
+                    <Link href={`/collection/${art.id}?v=twin`} className="dip b" aria-label={`${art.title} — Chromatic Twin`}>
+                      <img src={art.images.twin} alt={`${art.title} — Chromatic Twin`} loading="lazy" />
+                      <span className="dip-tag">Chromatic Twin ✦</span>
+                    </Link>
+                  </div>
+                ) : (
+                  <Link href={`/collection/${art.id}`} className="work-img" aria-label={art.title}>
+                    <img src={art.images.main} alt={art.title} loading="lazy" />
                   </Link>
-                  <Link href={`/collection/${art.id}?v=twin`} className="dip b" aria-label={`${art.title} — Chromatic Twin`}>
-                    <img src={art.images.twin} alt={`${art.title} — Chromatic Twin`} loading="lazy" />
-                    <span className="dip-tag">Chromatic Twin ✦</span>
-                  </Link>
-                </div>
-              ) : (
-                <Link href={`/collection/${art.id}`} className="work-img" aria-label={art.title}>
-                  <img src={art.images.main} alt={art.title} loading="lazy" />
-                </Link>
-              )}
+                )}
+              </div>
 
               {/* Texte minimal */}
               <div className="work-txt">
@@ -140,8 +142,10 @@ export default function ProjectPage({
         .pworks{ max-width:1300px; margin:0 auto;
           padding:clamp(70px,11vh,150px) clamp(24px,5vw,72px) clamp(40px,6vh,80px);
           display:flex; flex-direction:column; gap:clamp(80px,14vh,180px); }
-        .work{ display:grid; grid-template-columns:1.12fr .88fr; gap:clamp(28px,5vw,80px); align-items:center; }
-        .work.flip .work-img, .work.flip .diptych{ order:2; }   /* alterne : visuel à droite une ligne sur deux */
+        .work{ display:grid; grid-template-columns:1.45fr .9fr; gap:clamp(28px,5vw,72px); align-items:center; }
+        .work.flip{ grid-template-columns:.9fr 1.45fr; }         /* le VISUEL reste toujours le grand côté */
+        .media{ grid-column:1; } .work-txt{ grid-column:2; }
+        .work.flip .media{ grid-column:2; } .work.flip .work-txt{ grid-column:1; }
 
         /* Image seule (œuvres uniques) */
         .work-img{ display:block; overflow:hidden; background:#0b0d11; box-shadow:0 24px 70px rgba(0,0,0,.45); }
@@ -149,13 +153,16 @@ export default function ProjectPage({
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
 
-        /* Diptyque décalé (œuvres Twin) : Original + Chromatic Twin */
-        .diptych{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(12px,1.6vw,22px); align-items:start; }
-        .dip{ position:relative; display:block; overflow:hidden; background:#0b0d11; box-shadow:0 20px 55px rgba(0,0,0,.45); }
-        .dip img{ width:100%; height:auto; display:block; filter:brightness(.9);
+        /* Diptyque SUPERPOSÉ & décalé (œuvres Twin) : deux tirages plus grands
+           qui se chevauchent, l'un plus haut que l'autre = effet "galerie". */
+        .diptych{ display:flex; align-items:flex-start; }
+        .dip{ position:relative; overflow:hidden; background:#0b0d11; box-shadow:0 32px 74px rgba(0,0,0,.55); }
+        .dip img{ width:100%; height:auto; display:block; filter:brightness(.92);
           transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .dip:hover img{ filter:brightness(1); transform:scale(1.04); }
-        .dip.b{ margin-top:clamp(30px,7vw,72px); }     /* le Chromatic Twin décalé vers le bas */
+        .dip.a{ width:58%; z-index:1; }
+        .dip.b{ width:58%; margin-left:-16%; margin-top:11%; z-index:2; }  /* chevauche + descend */
+        .dip:hover{ z-index:3; }                                            /* l'image survolée passe devant */
         .dip-tag{ position:absolute; left:10px; bottom:10px; z-index:2; color:var(--gold);
           font-size:8px; letter-spacing:.2em; text-transform:uppercase; padding:4px 9px;
           background:rgba(14,17,22,.55); border:1px solid rgba(201,169,110,.4);
@@ -188,8 +195,10 @@ export default function ProjectPage({
         /* ===== MOBILE : on empile, visuel toujours au-dessus du texte ===== */
         @media (max-width:820px){
           .work{ grid-template-columns:1fr; gap:24px; }
-          .work.flip .work-img, .work.flip .diptych{ order:0; }
-          .dip.b{ margin-top:clamp(18px,5vw,36px); }
+          .work.flip{ grid-template-columns:1fr; }
+          .media, .work-txt, .work.flip .media, .work.flip .work-txt{ grid-column:auto; }
+          .dip.a, .dip.b{ width:60%; }
+          .dip.b{ margin-left:-20%; margin-top:9%; }
           .phero{ min-height:74vh; }
         }
       `}</style>
