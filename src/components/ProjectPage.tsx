@@ -6,7 +6,7 @@ import { type Artwork } from "@/data/artworks";
    (The Twins, Transmutations…).
    Hero plein écran + texte d'intro + vidéo optionnelle +
    ŒUVRES EN ÉDITORIAL ALTERNÉ (grand visuel / texte minimal).
-   • Œuvre "Twin" (isTwin)  → DIPTYQUE superposé portrait : Original + Chromatic Twin
+   • Œuvre "Twin" (isTwin)  → DIPTYQUE superposé/décalé : Original + Chromatic Twin
    • Œuvre unique           → image seule
    NB : on utilise des <a> natifs (styled-jsx ne style pas les <Link>).
    ============================================================ */
@@ -152,12 +152,12 @@ export default function ProjectPage({
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
 
-        /* Diptyque "Option A" — deux tirages recadrés PORTRAIT (4:5), superposés & décalés. */
+        /* Diptyque "Option A" — deux tirages superposés & décalés, au RATIO NATUREL
+           (paysage reste paysage, portrait reste portrait — aucune image écrasée). */
         .diptych{ display:flex; align-items:flex-start; }
         .dip{ position:relative; width:58%; flex:0 0 58%; overflow:hidden; background:#0b0d11;
           box-shadow:0 30px 72px rgba(0,0,0,.55); }
-        .dip::before{ content:""; display:block; padding-top:125%; }        /* 4:5 portrait */
-        .dip img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+        .dip img{ width:100%; height:auto; display:block;
           filter:brightness(.92); transition:filter .6s ease, transform 1.1s cubic-bezier(.4,0,.2,1); }
         .dip:hover img{ filter:brightness(1); transform:scale(1.05); }
         .dip.a{ z-index:1; }
