@@ -8,8 +8,8 @@ import { useEffect, useState } from "react";
 
 const LEFT = [
   { label: "Collection", href: "/collection" },
-  { label: "The Twins", href: "/#collection" },
-  { label: "Transmutations", href: "/collection#transmutations" },
+  { label: "The Twins", href: "/twins" },
+  { label: "Transmutations", href: "/transmutations" },
 ];
 const RIGHT = [
   { label: "About", href: "/#about" },
