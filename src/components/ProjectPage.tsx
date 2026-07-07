@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { type Artwork } from "@/data/artworks";
 
 /* ============================================================
@@ -9,7 +8,7 @@ import { type Artwork } from "@/data/artworks";
    ŒUVRES EN ÉDITORIAL ALTERNÉ (grand visuel / texte minimal).
    • Œuvre "Twin" (isTwin)  → DIPTYQUE superposé portrait : Original + Chromatic Twin
    • Œuvre unique           → image seule
-   L'image commande, le texte chuchote — jamais "blog".
+   NB : on utilise des <a> natifs (styled-jsx ne style pas les <Link>).
    ============================================================ */
 
 type NavLink = { label: string; href: string };
@@ -68,19 +67,19 @@ export default function ProjectPage({
               <div className="media">
                 {isTwin ? (
                   <div className="diptych">
-                    <Link href={`/collection/${art.id}`} className="dip a" aria-label={`${art.title} — Original`}>
+                    <a href={`/collection/${art.id}`} className="dip a" aria-label={`${art.title} — Original`}>
                       <img src={art.images.main} alt={`${art.title} — Original`} loading="lazy" />
                       <span className="dip-tag">Original</span>
-                    </Link>
-                    <Link href={`/collection/${art.id}?v=twin`} className="dip b" aria-label={`${art.title} — Chromatic Twin`}>
+                    </a>
+                    <a href={`/collection/${art.id}?v=twin`} className="dip b" aria-label={`${art.title} — Chromatic Twin`}>
                       <img src={art.images.twin} alt={`${art.title} — Chromatic Twin`} loading="lazy" />
                       <span className="dip-tag">Chromatic Twin ✦</span>
-                    </Link>
+                    </a>
                   </div>
                 ) : (
-                  <Link href={`/collection/${art.id}`} className="work-img" aria-label={art.title}>
+                  <a href={`/collection/${art.id}`} className="work-img" aria-label={art.title}>
                     <img src={art.images.main} alt={art.title} loading="lazy" />
-                  </Link>
+                  </a>
                 )}
               </div>
 
@@ -90,9 +89,9 @@ export default function ProjectPage({
                 <h2 className="work-title">{art.title}</h2>
                 <p className="work-desc">{art.description}</p>
                 {sold.length > 0 && <p className="work-sold">{sold[0]} · Sold</p>}
-                <Link href={`/collection/${art.id}`} className="work-cta">
+                <a href={`/collection/${art.id}`} className="work-cta">
                   {isTwin ? "Discover the pair" : "Discover the piece"} <i>→</i>
-                </Link>
+                </a>
               </div>
             </article>
           );
@@ -105,9 +104,9 @@ export default function ProjectPage({
           <p className="pm-eyebrow">Continue</p>
           <div className="pm-links">
             {explore.map((l) => (
-              <Link key={l.href} href={l.href} className="pm-link">
+              <a key={l.href} href={l.href} className="pm-link">
                 {l.label} <i>→</i>
-              </Link>
+              </a>
             ))}
           </div>
         </section>
@@ -149,13 +148,11 @@ export default function ProjectPage({
 
         /* Image seule (œuvres uniques) */
         .work-img{ display:block; overflow:hidden; background:#0b0d11; box-shadow:0 24px 70px rgba(0,0,0,.45); }
-        .work-img img{ width:100%; height:auto; display:block;   /* ratio naturel → œuvre entière */
+        .work-img img{ width:100%; height:auto; display:block;
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
 
-        /* Diptyque "Option A" — deux tirages recadrés PORTRAIT (4:5), superposés & décalés.
-           Boîte portrait GARANTIE via padding-top ; l'image remplit en object-fit:cover.
-           → même présentation généreuse pour horizontales ET verticales. */
+        /* Diptyque "Option A" — deux tirages recadrés PORTRAIT (4:5), superposés & décalés. */
         .diptych{ display:flex; align-items:flex-start; }
         .dip{ position:relative; width:58%; flex:0 0 58%; overflow:hidden; background:#0b0d11;
           box-shadow:0 30px 72px rgba(0,0,0,.55); }
@@ -165,7 +162,7 @@ export default function ProjectPage({
         .dip:hover img{ filter:brightness(1); transform:scale(1.05); }
         .dip.a{ z-index:1; }
         .dip.b{ margin-left:-16%; margin-top:13%; z-index:2; }               /* chevauche + descend */
-        .dip:hover{ z-index:3; }                                             /* l'image survolée passe devant */
+        .dip:hover{ z-index:3; }
         .dip-tag{ position:absolute; left:10px; bottom:10px; z-index:2; color:var(--gold);
           font-size:8px; letter-spacing:.2em; text-transform:uppercase; padding:4px 9px;
           background:rgba(14,17,22,.55); border:1px solid rgba(201,169,110,.4);
