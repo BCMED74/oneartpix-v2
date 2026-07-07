@@ -117,7 +117,7 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
   return (
     <section className="oap-detail">
       {/* IMAGE */}
-      <div className="visual">
+      <div className={"visual" + (galleryIdx === 0 ? " framed" : "")}>
         <img key={bigSrc} src={bigSrc} alt={artwork.title}
           className={"art" + (galleryIdx === 0 ? " fit" : "")}
           onClick={() => setLightbox(true)} />
@@ -316,21 +316,25 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
           display:grid; grid-template-columns:1.35fr .9fr; min-height:100vh; letter-spacing:-.01em;
         }
         .eyebrow{font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:var(--dim); font-weight:400;}
-        .visual{position:relative; overflow:hidden; background:#0b0d11; min-width:0;}
-        /* Image principale : COUVRE par défaut (photos in-situ plein cadre), mais l'ŒUVRE
-           (.fit) est affichée EN ENTIER (contain) pour qu'on la voie complètement.
-           Clic = ouverture plein écran (curseur loupe).
-           Apparition en fondu doux (SANS zoom → l'œuvre n'est jamais recadrée) ;
-           se re-déclenche à chaque image grâce au key={bigSrc}. */
+        .visual{position:relative; overflow:hidden; background:#0b0d11; min-width:0; min-height:100vh;}
+        /* Mode "framed" = l'ŒUVRE (index 0) : centrée dans la colonne et affichée EN ENTIER
+           quelle que soit son orientation (PORTRAIT ou paysage), avec de l'air autour
+           = présentation "galerie / tirage encadré". Les photos in-situ restent en plein cadre (cover). */
+        .visual.framed{display:flex; align-items:center; justify-content:center; padding:clamp(28px,4vw,64px);}
         .art{width:100%; height:100%; min-height:100vh; object-fit:cover; display:block; cursor:zoom-in;
           animation:artin 1.1s cubic-bezier(.2,.7,.2,1) both;}
-        .art.fit{object-fit:contain; background:#0b0d11;}
+        /* L'œuvre encadrée : bornée en hauteur ET en largeur → jamais coupée, jamais démesurée
+           (portrait = limité par la hauteur, paysage = limité par la largeur). Ombre douce = "au mur". */
+        .art.fit{width:auto; height:auto; min-height:0; max-width:100%; max-height:82vh;
+          object-fit:contain; background:transparent; box-shadow:0 20px 60px rgba(0,0,0,.45);}
         @keyframes artin{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
         .visual::after{content:""; position:absolute; inset:0; pointer-events:none;
           background:
             linear-gradient(180deg, rgba(14,17,22,.55), transparent 16%),
             linear-gradient(90deg, transparent 62%, rgba(14,17,22,.5)),
             linear-gradient(0deg, rgba(14,17,22,.55), transparent 42%);}
+        /* Pas de dégradé par-dessus l'œuvre encadrée (le dégradé ne sert qu'aux photos plein cadre). */
+        .visual.framed::after{display:none;}
         .caption{position:absolute; left:clamp(24px,3vw,42px); bottom:clamp(24px,4vh,38px); z-index:2;
           font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:var(--grey);}
 
@@ -455,7 +459,9 @@ export default function ArtworkDetail({ artwork, prevId, nextId }: Props) {
 
         @media (max-width:900px){
           .oap-detail{grid-template-columns:1fr;}
+          .visual{min-height:auto;} .visual.framed{padding:18px;}
           .art{min-height:60vh; height:60vh;}
+          .art.fit{max-height:56vh;}
           .detail{padding:36px 24px 56px; justify-content:flex-start;}
           .toprow{margin-bottom:28px;} .title{font-size:clamp(2rem,9vw,2.8rem);}
           .price{font-size:2.1rem;} .dc-grid{grid-template-columns:repeat(2,1fr);}
