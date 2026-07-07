@@ -7,6 +7,7 @@ import { type Artwork } from "@/data/artworks";
    Hero plein écran + texte d'intro + vidéo optionnelle +
    ŒUVRES EN ÉDITORIAL ALTERNÉ (grand visuel / texte minimal).
    • Œuvre "Twin" (isTwin)  → DIPTYQUE superposé/décalé : Original + Chromatic Twin
+     (paysage affiché plus large que portrait — détecté au chargement)
    • Œuvre unique           → image seule
    NB : on utilise des <a> natifs (styled-jsx ne style pas les <Link>).
    ============================================================ */
@@ -68,7 +69,8 @@ export default function ProjectPage({
                 {isTwin ? (
                   <div className="diptych">
                     <a href={`/collection/${art.id}`} className="dip a" aria-label={`${art.title} — Original`}>
-                      <img src={art.images.main} alt={`${art.title} — Original`} loading="lazy" />
+                      <img src={art.images.main} alt={`${art.title} — Original`} loading="lazy"
+                        onLoad={(e) => { const im = e.currentTarget; if (im.naturalWidth > im.naturalHeight) im.closest(".diptych")?.classList.add("landscape"); }} />
                       <span className="dip-tag">Original</span>
                     </a>
                     <a href={`/collection/${art.id}?v=twin`} className="dip b" aria-label={`${art.title} — Chromatic Twin`}>
@@ -162,7 +164,11 @@ export default function ProjectPage({
         .dip:hover img{ filter:brightness(1); transform:scale(1.05); }
         .dip.a{ z-index:1; }
         .dip.b{ margin-left:-16%; margin-top:13%; z-index:2; }               /* chevauche + descend */
-        .dip:hover{ z-index:3; }
+        .dip:hover{ z-index:3; }                                             /* l'image survolée passe devant */
+        /* PAYSAGE : tirages plus larges (présence égale aux portraits). La classe .landscape
+           est ajoutée au chargement quand l'image est plus large que haute (voir onLoad). */
+        .diptych.landscape .dip{ width:70%; flex:0 0 70%; }
+        .diptych.landscape .dip.b{ margin-left:-40%; margin-top:14%; }
         .dip-tag{ position:absolute; left:10px; bottom:10px; z-index:2; color:var(--gold);
           font-size:8px; letter-spacing:.2em; text-transform:uppercase; padding:4px 9px;
           background:rgba(14,17,22,.55); border:1px solid rgba(201,169,110,.4);
