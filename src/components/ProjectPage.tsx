@@ -142,21 +142,19 @@ export default function ProjectPage({
         /* ===== ŒUVRES — éditorial alterné ===== */
         .pworks{ max-width:1300px; margin:0 auto;
           padding:clamp(70px,11vh,150px) clamp(24px,5vw,72px) clamp(40px,6vh,80px);
-         display:flex; flex-direction:column; gap:clamp(20px,3.5vh,52px); }
+         display:flex; flex-direction:column; gap:clamp(36px,6vh,80px); }
         .work{ display:grid; grid-template-columns:1.45fr .9fr; gap:clamp(28px,5vw,72px); align-items:center; }
         .work.flip{ grid-template-columns:.9fr 1.45fr; }         /* le VISUEL reste toujours le grand côté */
         .media{ grid-column:1; } .work-txt{ grid-column:2; }
         .work.flip .media{ grid-column:2; } .work.flip .work-txt{ grid-column:1; }
 
-        /* Image seule (œuvres uniques) — SANS passe-partout : la photo s'affiche à sa
-           taille réelle (ratio naturel, jamais déformée), plafonnée à une hauteur
-           constante pour rester harmonieuse. Zéro noir autour, texte bien en face. */
-        .work-img{ display:block; text-align:center; }
-        .work-img img{ display:inline-block; width:auto; max-width:100%; max-height:58vh; object-fit:contain;
+        /* Image seule (œuvres uniques) — MÊME HAUTEUR pour toutes (largeur libre → jamais
+           déformée, aucun recadrage). Rythme régulier, texte centré pile en face, zéro noir autour. */
+        .work-img{ display:flex; justify-content:center; align-items:center; }
+        .work-img img{ display:block; height:42vh; width:auto; max-width:100%;
           box-shadow:0 24px 70px rgba(0,0,0,.45);
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
-
         /* Diptyque "Option A" — deux tirages superposés & décalés, au RATIO NATUREL
            (paysage reste paysage, portrait reste portrait — aucune image écrasée). */
         .diptych{ display:flex; align-items:flex-start; }
