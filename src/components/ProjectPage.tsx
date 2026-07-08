@@ -80,8 +80,7 @@ export default function ProjectPage({
                   </div>
                 ) : (
                   <a href={`/collection/${art.id}`} className="work-img" aria-label={art.title}>
-                   <img src={art.images.main} alt={art.title} loading="lazy"
-                      onLoad={(e) => { const im = e.currentTarget; im.closest(".work-img")?.classList.add(im.naturalWidth > im.naturalHeight ? "landscape" : "portrait"); }} />
+                    <img src={art.images.main} alt={art.title} loading="lazy" />
                   </a>
                 )}
               </div>
@@ -149,14 +148,13 @@ export default function ProjectPage({
         .media{ grid-column:1; } .work-txt{ grid-column:2; }
         .work.flip .media{ grid-column:2; } .work.flip .work-txt{ grid-column:1; }
 
-      /* Image seule (œuvres uniques) — TAILLE UNIFORME par orientation :
-           tous les portraits au même cadre (4:5), tous les paysages au même cadre (3:2). */
-        .work-img{ position:relative; display:block; overflow:hidden; background:#0b0d11; box-shadow:0 24px 70px rgba(0,0,0,.45); }
-        .work-img img{ width:100%; height:auto; display:block;
+        /* Image seule (œuvres uniques) — CADRE UNIFORME + passe-partout noir :
+           MÊME boîte pour toutes (portrait comme paysage), image ENTIÈRE (contain)
+           → AUCUNE déformation, AUCUN recadrage. Le fond gère les différences de format. */
+        .work-img{ position:relative; display:block; overflow:hidden; background:#0b0d11;
+          aspect-ratio:4 / 5; box-shadow:0 24px 70px rgba(0,0,0,.45); }
+        .work-img img{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block;
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
-        .work-img.portrait{ aspect-ratio:4 / 5; }
-        .work-img.landscape{ aspect-ratio:3 / 2; }
-        .work-img.portrait img, .work-img.landscape img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
 
         /* Diptyque "Option A" — deux tirages superposés & décalés, au RATIO NATUREL
