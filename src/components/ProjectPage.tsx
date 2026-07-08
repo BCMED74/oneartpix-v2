@@ -142,7 +142,7 @@ export default function ProjectPage({
         /* ===== ŒUVRES — éditorial alterné ===== */
         .pworks{ max-width:1300px; margin:0 auto;
           padding:clamp(70px,11vh,150px) clamp(24px,5vw,72px) clamp(40px,6vh,80px);
-          display:flex; flex-direction:column; gap:clamp(80px,14vh,180px); }
+          display:flex; flex-direction:column; gap:clamp(44px,7vh,96px); }
         .work{ display:grid; grid-template-columns:1.45fr .9fr; gap:clamp(28px,5vw,72px); align-items:center; }
         .work.flip{ grid-template-columns:.9fr 1.45fr; }         /* le VISUEL reste toujours le grand côté */
         .media{ grid-column:1; } .work-txt{ grid-column:2; }
@@ -153,7 +153,7 @@ export default function ProjectPage({
            image ENTIÈRE, jamais déformée ni rognée. Le matte s'oriente tout seul :
            barres verticales pour les portraits, horizontales pour les paysages. */
         .work-img{ position:relative; display:block; overflow:hidden; background:#0b0d11;
-          aspect-ratio:1 / 1; box-shadow:0 24px 70px rgba(0,0,0,.45); }
+          width:min(100%, 60vh); aspect-ratio:1 / 1; margin:0 auto; box-shadow:0 24px 70px rgba(0,0,0,.45); }
         .work-img img{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block;
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
