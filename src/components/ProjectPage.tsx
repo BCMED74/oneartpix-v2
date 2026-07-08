@@ -142,19 +142,18 @@ export default function ProjectPage({
         /* ===== ŒUVRES — éditorial alterné ===== */
         .pworks{ max-width:1300px; margin:0 auto;
           padding:clamp(70px,11vh,150px) clamp(24px,5vw,72px) clamp(40px,6vh,80px);
-          display:flex; flex-direction:column; gap:clamp(44px,7vh,96px); }
+         display:flex; flex-direction:column; gap:clamp(20px,3.5vh,52px); }
         .work{ display:grid; grid-template-columns:1.45fr .9fr; gap:clamp(28px,5vw,72px); align-items:center; }
         .work.flip{ grid-template-columns:.9fr 1.45fr; }         /* le VISUEL reste toujours le grand côté */
         .media{ grid-column:1; } .work-txt{ grid-column:2; }
         .work.flip .media{ grid-column:2; } .work.flip .work-txt{ grid-column:1; }
 
-        /* Image seule (œuvres uniques) — BOÎTE CARRÉE UNIQUE + passe-partout noir :
-           MÊME boîte (donc même volume visuel) pour toutes. object-fit:contain →
-           image ENTIÈRE, jamais déformée ni rognée. Le matte s'oriente tout seul :
-           barres verticales pour les portraits, horizontales pour les paysages. */
-        .work-img{ position:relative; display:block; overflow:hidden; background:#0b0d11;
-          width:min(100%, 60vh); aspect-ratio:1 / 1; margin:0 auto; box-shadow:0 24px 70px rgba(0,0,0,.45); }
-        .work-img img{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block;
+        /* Image seule (œuvres uniques) — SANS passe-partout : la photo s'affiche à sa
+           taille réelle (ratio naturel, jamais déformée), plafonnée à une hauteur
+           constante pour rester harmonieuse. Zéro noir autour, texte bien en face. */
+        .work-img{ display:block; text-align:center; }
+        .work-img img{ display:inline-block; width:auto; max-width:100%; max-height:58vh; object-fit:contain;
+          box-shadow:0 24px 70px rgba(0,0,0,.45);
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
 
