@@ -7,7 +7,6 @@ import { type Artwork } from "@/data/artworks";
    Hero plein écran + texte d'intro + vidéo optionnelle +
    ŒUVRES EN ÉDITORIAL ALTERNÉ (grand visuel / texte minimal).
    • Œuvre "Twin" (isTwin)  → DIPTYQUE superposé/décalé : Original + Chromatic Twin
-     (paysage affiché plus large que portrait — détecté au chargement)
    • Œuvre unique           → image seule
    NB : on utilise des <a> natifs (styled-jsx ne style pas les <Link>).
    ============================================================ */
@@ -15,15 +14,15 @@ import { type Artwork } from "@/data/artworks";
 type NavLink = { label: string; href: string };
 
 type Props = {
-  eyebrow: string;         // sur-titre (ex. "Original & Chromatic Twin")
-  title: string;           // titre du projet
-  intro: string;           // texte d'intro du hero (paragraphes séparés par \n\n)
-  works: Artwork[];        // UNIQUEMENT les œuvres de ce projet
-  heroImage?: string;      // image plein cadre du hero (défaut = 1re œuvre)
-  video?: string;          // chemin vidéo dans /public (optionnel) ex "/twins.mp4"
-  videoPoster?: string;    // image d'aperçu de la vidéo (optionnel)
-  videoCaption?: string;   // légende sous la vidéo (optionnel)
-  explore?: NavLink[];     // liens vers les autres univers / la collection
+  eyebrow: string;
+  title: string;
+  intro: string;
+  works: Artwork[];
+  heroImage?: string;
+  video?: string;
+  videoPoster?: string;
+  videoCaption?: string;
+  explore?: NavLink[];
 };
 
 export default function ProjectPage({
@@ -100,7 +99,7 @@ export default function ProjectPage({
         })}
       </section>
 
-      {/* ===== CONTINUER — liens vers les autres univers / la collection ===== */}
+      {/* ===== CONTINUER ===== */}
       {explore.length > 0 && (
         <section className="pmore">
           <p className="pm-eyebrow">Continue</p>
@@ -139,24 +138,23 @@ export default function ProjectPage({
         .pvideo-frame video{ width:100%; height:100%; object-fit:cover; display:block; }
         .pvideo-cap{ margin-top:16px; text-align:center; color:var(--dim); font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; }
 
-        /* ===== ŒUVRES — éditorial alterné ===== */
+        /* ===== ŒUVRES — éditorial alterné (FLEX : image d'un côté, texte de l'autre) ===== */
         .pworks{ max-width:1300px; margin:0 auto;
           padding:clamp(70px,11vh,150px) clamp(24px,5vw,72px) clamp(40px,6vh,80px);
-         display:flex; flex-direction:column; gap:clamp(36px,6vh,80px); }
-        .work{ display:grid; grid-template-columns:1.45fr .9fr; gap:clamp(28px,5vw,72px); align-items:center; }
-        .work.flip{ grid-template-columns:.9fr 1.45fr; }         /* le VISUEL reste toujours le grand côté */
-        .media{ grid-column:1; } .work-txt{ grid-column:2; }
-        .work.flip .media{ grid-column:2; } .work.flip .work-txt{ grid-column:1; }
+          display:flex; flex-direction:column; gap:clamp(36px,6vh,80px); }
+        .work{ display:flex; align-items:center; gap:clamp(40px,6vw,90px); }
+        .work.flip{ flex-direction:row-reverse; }         /* inverse image/texte une ligne sur deux */
+        .media{ flex:0 1 auto; }                          /* l'image à sa taille (modérée) */
+        .work-txt{ flex:1 1 0; min-width:0; }             /* le texte prend le reste, pile en face */
 
-        /* Image seule (œuvres uniques) — MÊME HAUTEUR pour toutes (largeur libre → jamais
-           déformée, aucun recadrage). Rythme régulier, texte centré pile en face, zéro noir autour. */
+        /* Image seule — ratio d'origine respecté, taille modérée (36vh max), même hauteur, centrée */
         .work-img{ display:block; text-align:center; line-height:0; }
         .work-img img{ display:inline-block; width:auto; height:auto; max-width:100%; max-height:36vh;
           box-shadow:0 24px 70px rgba(0,0,0,.45);
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
-        /* Diptyque "Option A" — deux tirages superposés & décalés, au RATIO NATUREL
-           (paysage reste paysage, portrait reste portrait — aucune image écrasée). */
+
+        /* Diptyque "Option A" — Original + Chromatic Twin superposés/décalés */
         .diptych{ display:flex; align-items:flex-start; }
         .dip{ position:relative; width:58%; flex:0 0 58%; overflow:hidden; background:#0b0d11;
           box-shadow:0 30px 72px rgba(0,0,0,.55); }
@@ -164,10 +162,8 @@ export default function ProjectPage({
           filter:brightness(.92); transition:filter .6s ease, transform 1.1s cubic-bezier(.4,0,.2,1); }
         .dip:hover img{ filter:brightness(1); transform:scale(1.05); }
         .dip.a{ z-index:1; }
-        .dip.b{ margin-left:-16%; margin-top:13%; z-index:2; }               /* chevauche + descend */
-        .dip:hover{ z-index:3; }                                             /* l'image survolée passe devant */
-        /* PAYSAGE : tirages plus larges (présence égale aux portraits). La classe .landscape
-           est ajoutée au chargement quand l'image est plus large que haute (voir onLoad). */
+        .dip.b{ margin-left:-16%; margin-top:13%; z-index:2; }
+        .dip:hover{ z-index:3; }
         .diptych.landscape .dip{ width:70%; flex:0 0 70%; }
         .diptych.landscape .dip.b{ margin-left:-40%; margin-top:14%; }
         .dip-tag{ position:absolute; left:10px; bottom:10px; z-index:2; color:var(--gold);
@@ -199,11 +195,10 @@ export default function ProjectPage({
         .pm-link i{ font-style:normal; color:var(--gold); transition:transform .3s; }
         .pm-link:hover{ color:var(--gold); } .pm-link:hover i{ transform:translateX(6px); }
 
-        /* ===== MOBILE : on empile, visuel toujours au-dessus du texte ===== */
+        /* ===== MOBILE : on empile (image au-dessus du texte) ===== */
         @media (max-width:820px){
-          .work{ grid-template-columns:1fr; gap:24px; }
-          .work.flip{ grid-template-columns:1fr; }
-          .media, .work-txt, .work.flip .media, .work.flip .work-txt{ grid-column:auto; }
+          .work{ flex-direction:column; align-items:stretch; gap:20px; }
+          .work.flip{ flex-direction:column; }
           .dip.b{ margin-top:11%; }
           .phero{ min-height:74vh; }
         }
