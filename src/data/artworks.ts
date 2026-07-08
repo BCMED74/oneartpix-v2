@@ -180,8 +180,8 @@ export const ARTWORKS: Artwork[] = [
     isTwin: false,
     sold: ["1/5"],
     images: {
-      main: "/ONEARTPIX_DSC02648_ED_WEBP.webp",
-      twin: "/ONEARTPIX_DSC02648_ED_WEBP.webp",
+main: "/ONEARTPIX_DSC07002_ED_WEBP.webp",
+      twin: "/ONEARTPIX_DSC07002_ED_WEBP.webp",
     },
     description:
       "Bagni Lido Camogli — Tigullio beaches, the most beautiful sea on the Eastern Riviera.",
@@ -194,12 +194,11 @@ export const ARTWORKS: Artwork[] = [
     editions: "5 + 2 AP",
     isTwin: false,
     images: {
-      main: "/ONEARTPIX_DSC07002_ED_WEBP.webp",
+   main: "/ONEARTPIX_DSC07002_ED_WEBP.webp",
       twin: "/ONEARTPIX_DSC07002_ED_WEBP.webp",
     },
     description:
       "Magnificent sunrise over the pink-granite Corsican mountains of the Piana Valley, from the Osini Pass.",
-  },
   {
     id: "crystalline",
     title: "Crystalline",
