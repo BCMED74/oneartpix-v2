@@ -150,8 +150,8 @@ export default function ProjectPage({
 
         /* Image seule (œuvres uniques) — MÊME HAUTEUR pour toutes (largeur libre → jamais
            déformée, aucun recadrage). Rythme régulier, texte centré pile en face, zéro noir autour. */
-        .work-img{ display:flex; justify-content:center; align-items:center; }
-        .work-img img{ display:block; height:42vh; width:auto; max-width:100%;
+        .work-img{ display:block; text-align:center; line-height:0; }
+        .work-img img{ display:inline-block; width:auto; height:auto; max-width:100%; max-height:36vh;
           box-shadow:0 24px 70px rgba(0,0,0,.45);
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
