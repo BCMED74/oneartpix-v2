@@ -80,8 +80,7 @@ export default function ProjectPage({
                   </div>
                 ) : (
                   <a href={`/collection/${art.id}`} className="work-img" aria-label={art.title}>
-                    <img src={art.images.main} alt={art.title} loading="lazy"
-                      onLoad={(e) => { const im = e.currentTarget; if (im.naturalWidth > im.naturalHeight) im.closest(".work-img")?.classList.add("landscape"); }} />
+                    <img src={art.images.main} alt={art.title} loading="lazy" />
                   </a>
                 )}
               </div>
@@ -149,13 +148,12 @@ export default function ProjectPage({
         .media{ grid-column:1; } .work-txt{ grid-column:2; }
         .work.flip .media{ grid-column:2; } .work.flip .work-txt{ grid-column:1; }
 
-        /* Image seule (œuvres uniques) — CADRE PAR ORIENTATION + passe-partout noir :
-           portrait = boîte 4:5, paysage = boîte 3:2 (détecté au chargement).
-           object-fit:contain → image ENTIÈRE, AUCUNE déformation ni recadrage ;
-           le fond noir absorbe les petites différences de format. */
+        /* Image seule (œuvres uniques) — BOÎTE CARRÉE UNIQUE + passe-partout noir :
+           MÊME boîte (donc même volume visuel) pour toutes. object-fit:contain →
+           image ENTIÈRE, jamais déformée ni rognée. Le matte s'oriente tout seul :
+           barres verticales pour les portraits, horizontales pour les paysages. */
         .work-img{ position:relative; display:block; overflow:hidden; background:#0b0d11;
-          aspect-ratio:4 / 5; box-shadow:0 24px 70px rgba(0,0,0,.45); }
-        .work-img.landscape{ aspect-ratio:3 / 2; }   /* paysage : boîte horizontale */
+          aspect-ratio:1 / 1; box-shadow:0 24px 70px rgba(0,0,0,.45); }
         .work-img img{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block;
           filter:brightness(.94); transition:filter .6s ease, transform 1s cubic-bezier(.4,0,.2,1); }
         .work-img:hover img{ filter:brightness(1); transform:scale(1.03); }
