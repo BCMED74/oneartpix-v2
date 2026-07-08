@@ -195,7 +195,7 @@ main: "/ONEARTPIX_DSC07002_ED_WEBP.webp",
     isTwin: false,
     images: {
    main: "/ONEARTPIX_DSC02648_ED_WEBP.webp",
-      twin: "/ONEARTPIX_DSC02648_ED_WEBP.webp",
+    twin: "/ONEARTPIX_DSC02648_ED_WEBP.webp",
     },
     description:
       "Magnificent sunrise over the pink-granite Corsican mountains of the Piana Valley, from the Osini Pass.",
