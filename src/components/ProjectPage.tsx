@@ -144,7 +144,8 @@ export default function ProjectPage({
           display:flex; flex-direction:column; gap:clamp(36px,6vh,80px); }
         .work{ display:flex; align-items:center; gap:clamp(40px,6vw,90px); }
         .work.flip{ flex-direction:row-reverse; }         /* inverse image/texte une ligne sur deux */
-        .media{ flex:0 1 auto; }                          /* l'image à sa taille (modérée) */
+        .media{ flex:0 1 auto; }                           /* image seule : à sa taille (modérée) */
+        .media:has(.diptych){ flex:1.4 1 0; min-width:0; } /* diptyque Twins : largeur propre */
         .work-txt{ flex:1 1 0; min-width:0; }             /* le texte prend le reste, pile en face */
 
         /* Image seule — ratio d'origine respecté, taille modérée (36vh max), même hauteur, centrée */
