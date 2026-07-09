@@ -303,8 +303,8 @@ main: "/ONEARTPIX_DSC07002_ED_WEBP.webp",
 
   /* ===== NOUVELLES ŒUVRES — Price on request ===== */
   {
-    id: "golden-hour", title: "Golden Hour", location: "Alpine Lake · Switzerland",
-    year: "2025", editions: "5 + 2 AP", isTwin: false, onRequest: true,
+   id: "golden-hour", title: "Golden Hour", location: "Plage Port Vieux · Biarritz · France",
+  year: "2024", editions: "5 + 2 AP", isTwin: false, onRequest: true,
     images: { main: "/golden-hour.webp", twin: "/golden-hour.webp" },
     description: "Limited-edition fine art print. Contact for details, sizes and availability.",
   },
