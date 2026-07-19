@@ -1,31 +1,43 @@
 "use client";
 import { EMAIL, COUNTRY, INSTAGRAM } from "@/data/site";
-
 /* ============================================================
    FOOTER — global (toutes les pages)
    Marque · pays · Instagram · email · droits réservés
-   ============================================================ */
 
+   NOTE : le premier "O" de OneArtPix est une porte discrète
+   vers la galerie privée (/private). Aucun indice visuel :
+   même couleur, même curseur. Connu de toi seul.
+   ============================================================ */
 const GOLD = "#C9A96E";
 const WHITE = "#F4F2ED";
-
 export default function Footer() {
   return (
     <footer style={{ background: "#0b0d11", borderTop: "1px solid rgba(255,255,255,0.07)",
       padding: "clamp(44px,6vh,68px) clamp(24px,5vw,72px)" }}>
       <div style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", flexWrap: "wrap",
         gap: "24px 40px", alignItems: "flex-end", justifyContent: "space-between" }}>
-
         {/* Marque + pays */}
         <div>
           <p style={{ color: WHITE, fontSize: "13px", letterSpacing: "0.3em", textTransform: "uppercase" }}>
-            OneArtPix
+            {/* === PORTE PRIVÉE : le "O" mène à /private, sans aucun signe distinctif === */}
+            
+              href="/private"
+              aria-label="O"
+              style={{
+                color: "inherit",
+                textDecoration: "none",
+                cursor: "inherit",
+                letterSpacing: "inherit",
+              }}
+            >
+              O
+            </a>
+            neArtPix
           </p>
           <p style={{ color: "#5a5955", fontSize: "10.5px", letterSpacing: "0.22em", marginTop: "10px", textTransform: "uppercase" }}>
             {COUNTRY}
           </p>
         </div>
-
         {/* Instagram + Email + droits */}
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px", justifyContent: "flex-end" }}>
