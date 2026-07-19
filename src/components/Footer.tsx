@@ -23,16 +23,11 @@ export default function Footer() {
             
               href="/private"
               aria-label="O"
-              style={{
-                color: "inherit",
-                textDecoration: "none",
-                cursor: "inherit",
-                letterSpacing: "inherit",
-              }}
+              style={{ color: "inherit", textDecoration: "none", cursor: "inherit", letterSpacing: "inherit" }}
             >
               O
             </a>
-            neArtPix
+            <span>neArtPix</span>
           </p>
           <p style={{ color: "#5a5955", fontSize: "10.5px", letterSpacing: "0.22em", marginTop: "10px", textTransform: "uppercase" }}>
             {COUNTRY}
