@@ -1,12 +1,13 @@
 /* ============================================================
    ONEARTPIX — PAGE PUBLIQUE  /reserve
-   Vitrine des collections sur invitation.
-   Indexée : c'est une page de marque, pas un contenu privé.
+   Aucune catégorie visible : un code-barres d'extraits,
+   puis une demande d'accès unique qui ouvre l'ensemble.
    ============================================================ */
 
 import type { Metadata } from "next";
 import { themeFolders } from "@/data/private";
-import ReserveThemes from "@/components/ReserveThemes";
+import ReserveBarcode from "@/components/ReserveBarcode";
+import AccessRequest from "@/components/AccessRequest";
 
 export const metadata: Metadata = {
   title: "The Reserve · OneArtPix",
@@ -15,18 +16,17 @@ export const metadata: Metadata = {
 };
 
 export default function ReservePage() {
-  const themes = themeFolders().map((f) => ({
-    slug: f.slug,
-    title: f.title,
-    subtitle: f.subtitle,
-    scope: f.scope,
-  }));
+  /* Les couvertures servent de matière au code-barres.
+     Aucun titre, aucun lien : rien ne révèle la structure. */
+  const images = themeFolders().map(
+    (f) => "/reserve/" + f.slug + ".webp"
+  );
 
   return (
-    <main style={{ minHeight: "100vh", background: "#0e1116", color: "#F4F2ED", padding: "120px 5vw 140px" }}>
+    <main style={{ minHeight: "100vh", background: "#0e1116", color: "#F4F2ED" }}>
 
       {/* === EN-TÊTE === */}
-      <header style={{ maxWidth: "760px", marginBottom: "88px" }}>
+      <header style={{ maxWidth: "760px", padding: "120px 5vw 72px" }}>
         <p style={{ color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", margin: "0 0 18px" }}>
           Sur invitation
         </p>
@@ -34,14 +34,23 @@ export default function ReservePage() {
           The Reserve
         </h1>
         <p style={{ color: "#9a9892", fontSize: "17px", lineHeight: 1.8, margin: 0 }}>
-          Certaines séries ne rejoignent pas la collection publique. Elles restent en réserve,
-          montrées uniquement à qui les demande. Choisissez un territoire : un accès temporaire
-          de quinze jours vous sera transmis.
+          Une part du travail ne rejoint jamais la collection publique. Ces séries
+          restent en réserve, montrées à qui les demande. Laissez vos coordonnées :
+          un accès temporaire de quinze jours vous sera transmis.
         </p>
       </header>
 
-      {/* === THÉMATIQUES === */}
-      <ReserveThemes themes={themes} />
+      {/* === CODE-BARRES === */}
+      <ReserveBarcode images={images} />
+
+      {/* === DEMANDE D'ACCÈS === */}
+      <section style={{ padding: "88px 5vw 140px" }}>
+        <AccessRequest scope="RESERVE" title="Demander un accès" />
+
+        <p style={{ color: "#6b6a65", fontSize: "12px", marginTop: "40px" }}>
+          Vous avez déjà un code ? <a href="/private" style={{ color: "#C9A96E", textDecoration: "none" }}>Entrer</a>
+        </p>
+      </section>
 
     </main>
   );
