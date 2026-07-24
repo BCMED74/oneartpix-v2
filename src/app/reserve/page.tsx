@@ -1,7 +1,8 @@
 /* ============================================================
    ONEARTPIX — PAGE PUBLIQUE  /reserve
-   Composition centrée : titre, code-barres pleine largeur,
-   demande d'accès. Aucune catégorie n'est révélée.
+   Deux chemins clairement séparés :
+   · demander un accès (nouveau visiteur)
+   · entrer avec un code (visiteur invité)
    ============================================================ */
 
 import type { Metadata } from "next";
@@ -41,22 +42,42 @@ export default function ReservePage() {
         </h1>
         <p style={{ color: "#9a9892", fontSize: "17px", lineHeight: 1.8, margin: 0 }}>
           Une part du travail ne rejoint jamais la collection publique. Ces séries
-          restent en réserve, montrées à qui les demande. Laissez vos coordonnées :
-          un accès temporaire de quinze jours vous sera transmis.
+          restent en réserve, montrées à qui les demande.
         </p>
       </header>
 
       {/* === CODE-BARRES (pleine largeur) === */}
       <ReserveBarcode images={images} />
 
-      {/* === DEMANDE D'ACCÈS (centrée) === */}
-      <section style={{ padding: "88px 5vw 140px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+      {/* === LES DEUX CHEMINS === */}
+      <section style={{ padding: "88px 5vw 40px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+
+        {/* --- 1. Déjà invité --- */}
+        <div style={{ width: "100%", maxWidth: "480px", border: "1px solid #2a2f38", padding: "36px 32px", textAlign: "center", marginBottom: "72px" }}>
+          <p style={{ color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", margin: "0 0 14px" }}>
+            Déjà invité
+          </p>
+          <p style={{ color: "#9a9892", fontSize: "14px", lineHeight: 1.7, margin: "0 0 26px" }}>
+            Vous avez reçu un code d’accès&nbsp;? Entrez directement dans la réserve.
+          </p>
+          <a href="/private" style={{ display: "inline-block", border: "1px solid #C9A96E", color: "#F4F2ED", fontSize: "13px", letterSpacing: "0.22em", textTransform: "uppercase", textDecoration: "none", padding: "15px 40px" }}>
+            Entrer avec un code
+          </a>
+        </div>
+
+        {/* --- séparateur --- */}
+        <div style={{ display: "flex", alignItems: "center", gap: "18px", width: "100%", maxWidth: "480px", marginBottom: "64px" }}>
+          <span style={{ flex: 1, height: "1px", background: "#2a2f38" }} />
+          <span style={{ color: "#5a5955", fontSize: "10px", letterSpacing: "0.28em", textTransform: "uppercase" }}>ou</span>
+          <span style={{ flex: 1, height: "1px", background: "#2a2f38" }} />
+        </div>
+
+        {/* --- 2. Nouvelle demande --- */}
         <AccessRequest scope="RESERVE" title="Demander un accès" />
 
-        <p style={{ color: "#6b6a65", fontSize: "12px", marginTop: "40px", textAlign: "center" }}>
-          Vous avez déjà un code ? <a href="/private" style={{ color: "#C9A96E", textDecoration: "none" }}>Entrer</a>
-        </p>
       </section>
+
+      <div style={{ height: "100px" }} />
 
     </main>
   );
