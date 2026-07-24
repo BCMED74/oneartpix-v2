@@ -1,9 +1,9 @@
 "use client";
 
 /* ============================================================
-   ONEARTPIX — FORMULAIRE DE DEMANDE D'ACCÈS
-   À poser sur n'importe quelle page :  <AccessRequest scope="SNOW" title="Snow" />
-   Styles en ligne (fiables avec Turbopack).
+   ONEARTPIX — ACCESS REQUEST FORM
+   Used inside the Reserve modal.
+   Inline styles: reliable with Turbopack.
    ============================================================ */
 
 import { useState } from "react";
@@ -47,39 +47,39 @@ export default function AccessRequest({ scope, title }: { scope: string; title?:
   /* === CONFIRMATION === */
   if (state === "done") {
     return (
-      <div style={{ border: "1px solid " + LINE, padding: "40px", maxWidth: "480px" }}>
-        <p style={{ color: GOLD, fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", margin: "0 0 16px" }}>Demande reçue</p>
+      <div style={{ textAlign: "center", padding: "20px 0" }}>
+        <p style={{ color: GOLD, fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", margin: "0 0 16px" }}>Request received</p>
         <p style={{ color: WHITE, fontSize: "16px", fontWeight: 300, lineHeight: 1.7, margin: 0 }}>
-          Merci. Votre demande a bien été transmise. Vous recevrez votre accès par email sous peu.
+          Thank you. Your request has been sent. You will receive your access by email shortly.
         </p>
       </div>
     );
   }
 
-  /* === FORMULAIRE === */
+  /* === FORM === */
   return (
-    <div style={{ maxWidth: "480px" }}>
-      <p style={{ color: GOLD, fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", margin: "0 0 14px" }}>Sur demande</p>
-      <h3 style={{ color: WHITE, fontSize: "24px", fontWeight: 300, margin: "0 0 12px" }}>{title || scope}</h3>
+    <div>
+      <p style={{ color: GOLD, fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", margin: "0 0 14px" }}>By request</p>
+      <h3 style={{ color: WHITE, fontSize: "24px", fontWeight: 300, margin: "0 0 12px" }}>{title || "Request access"}</h3>
       <p style={{ color: GREY, fontSize: "14px", lineHeight: 1.7, margin: "0 0 32px" }}>
-        Cette sélection n’est pas publique. Laissez vos coordonnées, un accès temporaire de 15 jours vous sera transmis.
+        This selection is not public. Leave your details and a temporary fifteen-day access will be sent to you.
       </p>
 
-      <p style={label}>Nom</p>
+      <p style={label}>Name</p>
       <input type="text" value={name} style={field} onChange={(e) => setName(e.target.value)} />
 
       <p style={label}>Email</p>
       <input type="email" value={email} style={field} onChange={(e) => setEmail(e.target.value)} />
 
-      <p style={label}>Message (facultatif)</p>
+      <p style={label}>Message (optional)</p>
       <textarea value={message} rows={3} style={{ ...field, resize: "vertical" }} onChange={(e) => setMessage(e.target.value)} />
 
       <button onClick={send} disabled={state === "busy" || !name.trim() || !email.trim()}
         style={{ marginTop: "12px", background: "transparent", border: "1px solid " + GOLD, color: WHITE, fontFamily: "inherit", fontSize: "13px", letterSpacing: "0.22em", textTransform: "uppercase", padding: "15px 34px", cursor: "pointer", opacity: state === "busy" || !name.trim() || !email.trim() ? 0.35 : 1 }}>
-        {state === "busy" ? "…" : "Demander l’accès"}
+        {state === "busy" ? "…" : "Request access"}
       </button>
 
-      {state === "error" ? <p style={{ color: DIM, fontSize: "12px", marginTop: "18px" }}>Envoi impossible. Réessayez.</p> : null}
+      {state === "error" ? <p style={{ color: DIM, fontSize: "12px", marginTop: "18px" }}>Could not send. Please try again.</p> : null}
     </div>
   );
 }
