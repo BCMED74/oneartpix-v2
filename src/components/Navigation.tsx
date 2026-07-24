@@ -10,6 +10,7 @@ const LEFT = [
   { label: "Collection", href: "/collection" },
   { label: "The Twins", href: "/twins" },
   { label: "Transmutations", href: "/transmutations" },
+  { label: "The Reserve", href: "/reserve" },
 ];
 const RIGHT = [
   { label: "About", href: "/#about" },
