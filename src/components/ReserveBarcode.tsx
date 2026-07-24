@@ -2,30 +2,30 @@
 
 /* ============================================================
    ONEARTPIX — CODE-BARRES
-   Bandes verticales de largeurs inégales, chacune montrant
-   un fragment d'une œuvre. On voit la matière, jamais le sujet.
+   Bandes verticales de largeurs inégales, chacune montrant un
+   fragment d'une œuvre. Le motif parcourt TOUTES les images
+   disponibles, sans jamais révéler un sujet entier.
    Au survol, la couleur revient.
    ============================================================ */
 
 import { useState } from "react";
 
-/* Rythme fixe (pas d'aléatoire : évite tout décalage au rendu).
-   w = largeur relative · i = index de l'image, null = barre pleine */
-const PATTERN: { w: number; i: number | null }[] = [
-  { w: 26, i: 0 }, { w: 5, i: null }, { w: 11, i: 1 }, { w: 4, i: null },
-  { w: 42, i: 2 }, { w: 7, i: null }, { w: 9, i: 0 }, { w: 3, i: null },
-  { w: 18, i: 1 }, { w: 6, i: null }, { w: 31, i: 2 }, { w: 4, i: null },
-  { w: 8, i: 0 }, { w: 12, i: 1 }, { w: 5, i: null }, { w: 24, i: 2 },
-  { w: 3, i: null }, { w: 15, i: 0 }, { w: 7, i: null }, { w: 38, i: 1 },
-  { w: 5, i: null }, { w: 10, i: 2 }, { w: 4, i: null }, { w: 21, i: 0 },
-  { w: 6, i: null }, { w: 13, i: 1 }, { w: 3, i: null }, { w: 29, i: 2 },
-  { w: 8, i: null }, { w: 16, i: 0 }, { w: 4, i: null }, { w: 11, i: 1 },
-  { w: 6, i: null }, { w: 34, i: 2 }, { w: 5, i: null }, { w: 9, i: 0 },
+/* Largeurs relatives. 0 = séparation sombre, sinon largeur de bande.
+   Rythme fixe (aucun aléatoire : évite tout décalage au rendu).   */
+const WIDTHS = [
+  26, 0, 11, 0, 42, 0, 9, 0, 18, 0, 31, 0, 8, 12, 0, 24,
+  0, 15, 0, 38, 0, 10, 0, 21, 0, 13, 0, 29, 0, 16, 0, 11,
+  0, 34, 0, 9, 0, 19, 0, 27, 0, 7, 0, 23, 0, 14, 0, 36,
 ];
+
+/* Décalages de cadrage : chaque bande montre une zone différente. */
+const SHIFTS = [8, 62, 31, 88, 17, 74, 45, 96, 23, 57, 12, 81, 39, 68, 5, 92];
 
 export default function ReserveBarcode({ images }: { images: string[] }) {
   const [hot, setHot] = useState(false);
   if (images.length === 0) return null;
+
+  let bar = 0; // compte uniquement les bandes photo
 
   return (
     <div
@@ -37,21 +37,25 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
         borderTop: "1px solid #1c2129", borderBottom: "1px solid #1c2129",
       }}
     >
-      {PATTERN.map((s, k) => {
-        /* Barre pleine : simple séparation sombre. */
-        if (s.i === null) {
-          return <div key={k} style={{ flex: s.w + " 0 0", background: "#0b0d11" }} />;
+      {WIDTHS.map((w, k) => {
+        /* --- séparation --- */
+        if (w === 0) {
+          return <div key={k} style={{ flex: "5 0 0", background: "#0b0d11" }} />;
         }
-        const src = images[s.i % images.length];
+
+        /* --- bande photo : on parcourt toute la liste --- */
+        const src = images[bar % images.length];
+        const shift = SHIFTS[bar % SHIFTS.length];
+        bar++;
+
         return (
           <div
             key={k}
             style={{
-              flex: s.w + " 0 0",
+              flex: w + " 0 0",
               backgroundImage: "url(" + src + ")",
               backgroundSize: "cover",
-              /* chaque bande montre une tranche différente */
-              backgroundPosition: ((k * 23) % 100) + "% center",
+              backgroundPosition: shift + "% center",
               filter: hot ? "grayscale(0) brightness(1)" : "grayscale(0.75) brightness(0.7)",
               transition: "filter 1.1s cubic-bezier(0.2,0.8,0.2,1)",
             }}
