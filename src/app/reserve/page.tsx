@@ -1,10 +1,12 @@
 /* ============================================================
    ONEARTPIX — PAGE PUBLIQUE  /reserve
-   Aucune catégorie visible : un code-barres d'extraits,
-   puis une demande d'accès unique qui ouvre l'ensemble.
+   Composition centrée : titre, code-barres pleine largeur,
+   demande d'accès. Aucune catégorie n'est révélée.
    ============================================================ */
 
 import type { Metadata } from "next";
+import path from "path";
+import fs from "fs";
 import { themeFolders } from "@/data/private";
 import ReserveBarcode from "@/components/ReserveBarcode";
 import AccessRequest from "@/components/AccessRequest";
@@ -16,17 +18,21 @@ export const metadata: Metadata = {
 };
 
 export default function ReservePage() {
-  /* Les couvertures servent de matière au code-barres.
-     Aucun titre, aucun lien : rien ne révèle la structure. */
-  const images = themeFolders().map(
-    (f) => "/reserve/" + f.slug + ".webp"
-  );
+  /* On ne retient que les couvertures réellement déposées :
+     une image absente laisserait une bande vide dans le motif. */
+  const dir = path.join(process.cwd(), "public", "reserve");
+  const images = themeFolders()
+    .map((f) => f.slug + ".webp")
+    .filter((name) => {
+      try { return fs.existsSync(path.join(dir, name)); } catch { return false; }
+    })
+    .map((name) => "/reserve/" + name);
 
   return (
     <main style={{ minHeight: "100vh", background: "#0e1116", color: "#F4F2ED" }}>
 
       {/* === EN-TÊTE === */}
-      <header style={{ maxWidth: "760px", padding: "120px 5vw 72px" }}>
+      <header style={{ maxWidth: "680px", margin: "0 auto", padding: "120px 5vw 72px", textAlign: "center" }}>
         <p style={{ color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", margin: "0 0 18px" }}>
           Sur invitation
         </p>
@@ -40,14 +46,14 @@ export default function ReservePage() {
         </p>
       </header>
 
-      {/* === CODE-BARRES === */}
+      {/* === CODE-BARRES (pleine largeur) === */}
       <ReserveBarcode images={images} />
 
-      {/* === DEMANDE D'ACCÈS === */}
-      <section style={{ padding: "88px 5vw 140px" }}>
+      {/* === DEMANDE D'ACCÈS (centrée) === */}
+      <section style={{ padding: "88px 5vw 140px", display: "flex", flexDirection: "column", alignItems: "center" }}>
         <AccessRequest scope="RESERVE" title="Demander un accès" />
 
-        <p style={{ color: "#6b6a65", fontSize: "12px", marginTop: "40px" }}>
+        <p style={{ color: "#6b6a65", fontSize: "12px", marginTop: "40px", textAlign: "center" }}>
           Vous avez déjà un code ? <a href="/private" style={{ color: "#C9A96E", textDecoration: "none" }}>Entrer</a>
         </p>
       </section>
