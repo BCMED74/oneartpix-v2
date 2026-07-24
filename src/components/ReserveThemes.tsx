@@ -25,13 +25,13 @@ export default function ReserveThemes({ themes }: { themes: Theme[] }) {
     <div>
 
       {/* === GRILLE DES THÉMATIQUES === */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: "40px 28px" }}>
+     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(340px,1fr))", gap: "48px 32px" }}>
         {themes.map(function (t) {
           const on = open !== null && open.scope === t.scope;
           return (
             <button key={t.slug} onClick={() => setOpen(on ? null : t)}
               style={{ background: "transparent", border: "none", padding: 0, cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}>
-              <div style={{ aspectRatio: "4 / 5", overflow: "hidden", background: "#161a21", border: on ? "1px solid " + GOLD : "1px solid transparent", marginBottom: "18px" }}>
+            <div style={{ aspectRatio: "3 / 2", overflow: "hidden", background: "#161a21", border: on ? "1px solid " + GOLD : "1px solid transparent", marginBottom: "18px" }}>
                 <img src={"/reserve/" + t.slug + ".webp"} alt="" loading="lazy"
                   style={{ width: "100%", height: "100%", objectFit: "cover", filter: on ? "none" : "grayscale(0.35) brightness(0.85)", transition: "filter .5s ease" }} />
               </div>
