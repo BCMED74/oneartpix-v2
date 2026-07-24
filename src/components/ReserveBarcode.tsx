@@ -2,8 +2,8 @@
 
 /* ============================================================
    ONEARTPIX — BARCODE GATE
-   The gold button sits inside the barcode, on a dark cut-out.
-   Click opens two paths: enter a code, or request one.
+   The barcode runs uninterrupted; a dark frame floats over it,
+   holding the gold button. Bands stay visible above and below.
    ============================================================ */
 
 import { useEffect, useState } from "react";
@@ -69,7 +69,7 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
   return (
     <div>
 
-      {/* === BARCODE + CUT-OUT === */}
+      {/* === BARCODE (uninterrupted) === */}
       <div
         onMouseEnter={() => setHot(true)}
         onMouseLeave={() => setHot(false)}
@@ -77,7 +77,7 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
         title="Enter with a code"
         style={{
           position: "relative",
-          display: "flex", width: "100%", height: "clamp(200px,30vh,340px)",
+          display: "flex", width: "100%", height: "clamp(240px,36vh,400px)",
           overflow: "hidden", background: DARK, cursor: "pointer",
           borderTop: "1px solid " + (hot || open ? GOLD : "#1c2129"),
           borderBottom: "1px solid " + (open ? GOLD : "#1c2129"),
@@ -102,13 +102,13 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
           );
         })}
 
-        {/* --- dark cut-out holding the button --- */}
+        {/* --- floating frame --- */}
         <div style={{
-          position: "absolute", top: 0, bottom: 0, left: "50%",
-          transform: "translateX(-50%)",
-          display: "flex", alignItems: "center", justifyContent: "center",
+          position: "absolute", top: "50%", left: "50%",
+          transform: "translate(-50%,-50%)",
           background: DARK,
-          padding: "0 clamp(28px,6vw,80px)",
+          border: "1px solid #1c2129",
+          padding: "clamp(30px,5vh,52px) clamp(44px,8vw,110px)",
           pointerEvents: "none",
         }}>
           <span style={{
