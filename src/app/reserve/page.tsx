@@ -31,16 +31,17 @@ export default function ReservePage() {
     <main style={{ minHeight: "100vh", background: "#0e1116", color: "#F4F2ED", display: "flex", flexDirection: "column" }}>
 
       {/* === HEADER === */}
-      <header style={{ maxWidth: "680px", margin: "0 auto", padding: "130px 5vw 64px", textAlign: "center" }}>
-        <p style={{ color: "#C9A96E", fontSize: "10px", letterSpacing: "0.3em", textTransform: "uppercase", margin: "0 0 18px" }}>
+      <header style={{ maxWidth: "720px", margin: "0 auto", padding: "130px 5vw 60px", textAlign: "center" }}>
+        <p style={{ color: "#C9A96E", fontSize: "11px", letterSpacing: "0.3em", textTransform: "uppercase", margin: "0 0 20px" }}>
           By invitation
         </p>
-        <h1 style={{ fontSize: "clamp(36px,6vw,68px)", fontWeight: 300, letterSpacing: "-0.01em", margin: "0 0 28px", lineHeight: 1.05 }}>
+        <h1 style={{ fontSize: "clamp(36px,6vw,68px)", fontWeight: 300, letterSpacing: "-0.01em", margin: "0 0 32px", lineHeight: 1.05 }}>
           The Reserve
         </h1>
-        <p style={{ color: "#9a9892", fontSize: "17px", lineHeight: 1.8, margin: 0 }}>
-          Part of the work never joins the public collection. These series stay
-          in reserve, shown only to those who ask.
+        <p style={{ color: "#b4b2ac", fontSize: "18px", lineHeight: 1.9, margin: 0 }}>
+          Part of the work never joins the public collection.
+          <br />
+          These series stay in reserve, shown only to those who ask.
         </p>
       </header>
 
