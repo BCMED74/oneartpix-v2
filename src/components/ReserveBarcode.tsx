@@ -2,9 +2,8 @@
 
 /* ============================================================
    ONEARTPIX — BARCODE GATE
-   Gold button → barcode → click opens two paths:
-   · enter an existing access code
-   · request one (opens a modal)
+   The gold button sits inside the barcode, on a dark cut-out.
+   Click opens two paths: enter a code, or request one.
    ============================================================ */
 
 import { useEffect, useState } from "react";
@@ -15,6 +14,7 @@ const WHITE = "#F4F2ED";
 const GREY = "#9a9892";
 const DIM = "#6b6a65";
 const LINE = "#2a2f38";
+const DARK = "#0b0d11";
 
 /* Relative widths. 0 = dark separator. Fixed rhythm. */
 const WIDTHS = [
@@ -69,42 +69,24 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
   return (
     <div>
 
-      {/* === GOLD BUTTON === */}
-      <div style={{ textAlign: "center", padding: "0 5vw 34px" }}>
-        <button
-          onClick={() => setOpen(!open)}
-          onMouseEnter={() => setHot(true)}
-          onMouseLeave={() => setHot(false)}
-          style={{
-            background: open ? GOLD : "transparent",
-            border: "1px solid " + GOLD,
-            color: open ? "#0e1116" : WHITE,
-            fontFamily: "inherit", fontSize: "14px", fontWeight: 400,
-            letterSpacing: "0.26em", textTransform: "uppercase",
-            padding: "17px 44px", cursor: "pointer",
-            transition: "background .35s ease, color .35s ease",
-          }}
-        >
-          {open ? "Close" : "Enter with a code"}
-        </button>
-      </div>
-
-      {/* === BARCODE === */}
+      {/* === BARCODE + CUT-OUT === */}
       <div
         onMouseEnter={() => setHot(true)}
         onMouseLeave={() => setHot(false)}
         onClick={() => setOpen(!open)}
         title="Enter with a code"
         style={{
-          display: "flex", width: "100%", height: "clamp(180px,26vh,300px)",
-          overflow: "hidden", background: "#0b0d11", cursor: "pointer",
+          position: "relative",
+          display: "flex", width: "100%", height: "clamp(200px,30vh,340px)",
+          overflow: "hidden", background: DARK, cursor: "pointer",
           borderTop: "1px solid " + (hot || open ? GOLD : "#1c2129"),
           borderBottom: "1px solid " + (open ? GOLD : "#1c2129"),
           transition: "border-color .5s ease",
         }}
       >
+        {/* --- the bands --- */}
         {WIDTHS.map((w, k) => {
-          if (w === 0) return <div key={k} style={{ flex: "5 0 0", background: "#0b0d11" }} />;
+          if (w === 0) return <div key={k} style={{ flex: "5 0 0", background: DARK }} />;
           const src = images[bar % images.length];
           const shift = SHIFTS[bar % SHIFTS.length];
           bar++;
@@ -119,6 +101,29 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
             }} />
           );
         })}
+
+        {/* --- dark cut-out holding the button --- */}
+        <div style={{
+          position: "absolute", top: 0, bottom: 0, left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: DARK,
+          padding: "0 clamp(28px,6vw,80px)",
+          pointerEvents: "none",
+        }}>
+          <span style={{
+            display: "inline-block",
+            background: open ? GOLD : "transparent",
+            border: "1px solid " + GOLD,
+            color: open ? DARK : WHITE,
+            fontSize: "14px", fontWeight: 400,
+            letterSpacing: "0.26em", textTransform: "uppercase",
+            padding: "17px 40px", whiteSpace: "nowrap",
+            transition: "background .35s ease, color .35s ease",
+          }}>
+            {open ? "Close" : "Enter with a code"}
+          </span>
+        </div>
       </div>
 
       {/* === PANEL === */}
@@ -126,7 +131,7 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
         overflow: "hidden",
         maxHeight: open ? "320px" : "0px",
         transition: "max-height .55s cubic-bezier(0.4,0,0.2,1)",
-        background: "#0b0d11",
+        background: DARK,
         borderBottom: open ? "1px solid " + LINE : "none",
       }}>
         <div style={{ maxWidth: "640px", margin: "0 auto", padding: "44px 5vw 50px", textAlign: "center" }}>
