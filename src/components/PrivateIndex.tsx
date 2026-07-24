@@ -20,7 +20,7 @@ export default function PrivateIndex({ folders, isMaster = false }: { folders: P
       <header className="head">
         <p className="eyebrow">Privé</p>
        <h1>Galerie</h1>
-        {isMaster ? <a href="/private/admin" style={{ color: "#6b6a65", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", textDecoration: "none", display: "inline-block", marginTop: 12 }}>Générer un code</a> : null}
+        {isMaster ? <a href="/private/admin" style={{ display: "inline-block", marginTop: 18, border: "1px solid #C9A96E", color: "#F4F2ED", fontSize: 13, letterSpacing: "0.22em", textTransform: "uppercase", textDecoration: "none", padding: "13px 26px" }}>Générer un code</a> : null}
         <button className="lock" onClick={lock}>
           Verrouiller
         </button>
