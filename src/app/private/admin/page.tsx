@@ -4,7 +4,7 @@
    ============================================================ */
 
 import type { Metadata } from "next";
-import { allScopes } from "@/data/private";
+import { privateFolders } from "@/data/private";
 import AdminCodes from "@/components/AdminCodes";
 
 export const metadata: Metadata = {
@@ -15,5 +15,13 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default function AdminPage() {
-  return <AdminCodes scopes={allScopes()} />;
+  /* On n'envoie au client que le strict nécessaire. */
+  const list = privateFolders.map((f) => ({
+    slug: f.slug,
+    title: f.title,
+    scope: f.scope,
+    family: f.family,
+  }));
+
+  return <AdminCodes folders={list} />;
 }
