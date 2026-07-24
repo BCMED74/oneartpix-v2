@@ -3,7 +3,8 @@
 /* ============================================================
    ONEARTPIX — BARCODE GATE
    The barcode runs uninterrupted; a dark frame floats over it,
-   holding the gold button. Bands stay visible above and below.
+   holding the gold button. The code field is masked by default,
+   with an eye toggle to reveal it.
    ============================================================ */
 
 import { useEffect, useState } from "react";
@@ -26,11 +27,23 @@ const WIDTHS = [
 /* Framing offsets: every band shows a different slice. */
 const SHIFTS = [8, 62, 31, 88, 17, 74, 45, 96, 23, 57, 12, 81, 39, 68, 5, 92];
 
+/* === EYE ICON === */
+function Eye({ off }: { off: boolean }) {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z" />
+      <circle cx="12" cy="12" r="3" />
+      {off ? <line x1="3" y1="21" x2="21" y2="3" /> : null}
+    </svg>
+  );
+}
+
 export default function ReserveBarcode({ images }: { images: string[] }) {
   const [hot, setHot] = useState(false);
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState(false);
   const [code, setCode] = useState("");
+  const [show, setShow] = useState(false);
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -109,96 +122,3 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
           background: DARK,
           border: "1px solid #1c2129",
           padding: "clamp(30px,5vh,52px) clamp(44px,8vw,110px)",
-          pointerEvents: "none",
-        }}>
-          <span style={{
-            display: "inline-block",
-            background: open ? GOLD : "transparent",
-            border: "1px solid " + GOLD,
-            color: open ? DARK : WHITE,
-            fontSize: "14px", fontWeight: 400,
-            letterSpacing: "0.26em", textTransform: "uppercase",
-            padding: "17px 40px", whiteSpace: "nowrap",
-            transition: "background .35s ease, color .35s ease",
-          }}>
-            {open ? "Close" : "Enter with a code"}
-          </span>
-        </div>
-      </div>
-
-      {/* === PANEL === */}
-      <div style={{
-        overflow: "hidden",
-        maxHeight: open ? "320px" : "0px",
-        transition: "max-height .55s cubic-bezier(0.4,0,0.2,1)",
-        background: DARK,
-        borderBottom: open ? "1px solid " + LINE : "none",
-      }}>
-        <div style={{ maxWidth: "640px", margin: "0 auto", padding: "44px 5vw 50px", textAlign: "center" }}>
-
-          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", justifyContent: "center" }}>
-            <input
-              type="text"
-              value={code}
-              placeholder="RESERVE-XXX-XXXXXX"
-              autoComplete="off"
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
-              style={{
-                flex: "1 1 320px", background: "transparent", border: "1px solid " + LINE,
-                color: WHITE, fontFamily: "inherit", fontSize: "16px", letterSpacing: "0.18em",
-                textAlign: "center", padding: "17px 18px", outline: "none", boxSizing: "border-box",
-              }}
-            />
-            <button onClick={submit} disabled={busy || !code.trim()}
-              style={{
-                background: "transparent", border: "1px solid " + GOLD, color: WHITE,
-                fontFamily: "inherit", fontSize: "14px", letterSpacing: "0.24em",
-                textTransform: "uppercase", padding: "17px 38px",
-                cursor: busy ? "default" : "pointer",
-                opacity: busy || !code.trim() ? 0.35 : 1,
-              }}>
-              {busy ? "…" : "Enter"}
-            </button>
-          </div>
-
-          {error ? (
-            <p style={{ color: GREY, fontSize: "12px", letterSpacing: "0.16em", textTransform: "uppercase", margin: "22px 0 0" }}>
-              Invalid or expired code
-            </p>
-          ) : null}
-
-          {/* --- second path --- */}
-          <div style={{ marginTop: "34px", paddingTop: "28px", borderTop: "1px solid #1c2129" }}>
-            <p style={{ color: GREY, fontSize: "13px", margin: "0 0 14px" }}>No code yet?</p>
-            <button onClick={() => setModal(true)}
-              style={{
-                background: "none", border: "1px solid " + LINE, color: GOLD,
-                fontFamily: "inherit", fontSize: "12px", letterSpacing: "0.24em",
-                textTransform: "uppercase", padding: "13px 30px", cursor: "pointer",
-              }}>
-              Request a private code
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      {/* === MODAL === */}
-      {modal ? (
-        <div onClick={() => setModal(false)}
-          style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(8,10,13,0.94)", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", overflowY: "auto" }}>
-          <div onClick={(e) => e.stopPropagation()}
-            style={{ position: "relative", width: "100%", maxWidth: "480px", background: "#0e1116", border: "1px solid " + LINE, padding: "44px 40px" }}>
-            <button onClick={() => setModal(false)} aria-label="Close"
-              style={{ position: "absolute", top: "16px", right: "18px", background: "none", border: "none", color: DIM, fontSize: "22px", lineHeight: 1, cursor: "pointer", padding: "4px" }}>
-              ×
-            </button>
-            <AccessRequest scope="RESERVE" title="Request a private code" />
-          </div>
-        </div>
-      ) : null}
-
-    </div>
-  );
-}
