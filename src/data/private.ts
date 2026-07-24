@@ -26,7 +26,7 @@ export type PrivateFolder = {
 
 export const privateFolders: PrivateFolder[] = [
 
-  /* --- PERSO --- */
+  /* ---------- PERSO ---------- */
   {
     slug: "nouveaux-tirages",
     title: "Nouveaux tirages",
@@ -41,7 +41,7 @@ export const privateFolders: PrivateFolder[] = [
     ],
   },
 
-  /* --- CLIENTS --- */
+  /* ---------- CLIENTS ---------- */
   {
     slug: "selection-villa",
     title: "Sélection villa",
@@ -55,18 +55,18 @@ export const privateFolders: PrivateFolder[] = [
     ],
   },
 
-  /* --- THE RESERVE (thématiques) --- */
+  /* ---------- THE RESERVE ---------- */
   {
-    slug: "snow",
-    title: "Snow",
+    slug: "mountains-snow",
+    title: "Mountains & Snow",
     subtitle: "Silence · altitude",
     scope: "SNOW",
     family: "theme",
-    cover: "/private-photos/snow/01.webp",
+    cover: "/private-photos/mountains-snow/01.webp",
     photos: [
-      { src: "/private-photos/snow/01.webp", title: "Snow 01" },
-      { src: "/private-photos/snow/02.webp", title: "Snow 02" },
-      { src: "/private-photos/snow/03.webp", title: "Snow 03" },
+      { src: "/private-photos/mountains-snow/01.webp", title: "Snow 01" },
+      { src: "/private-photos/mountains-snow/02.webp", title: "Snow 02" },
+      { src: "/private-photos/mountains-snow/03.webp", title: "Snow 03" },
     ],
   },
   {
@@ -80,6 +80,30 @@ export const privateFolders: PrivateFolder[] = [
       { src: "/private-photos/green/01.webp", title: "Green 01" },
       { src: "/private-photos/green/02.webp", title: "Green 02" },
       { src: "/private-photos/green/03.webp", title: "Green 03" },
+    ],
+  },
+  {
+    slug: "botanica",
+    title: "Botanica",
+    subtitle: "Lumière traversante · matière",
+    scope: "BOTANICA",
+    family: "theme",
+    cover: "/private-photos/botanica/01.webp",
+    photos: [
+      { src: "/private-photos/botanica/01.webp", title: "Botanica 01" },
+      { src: "/private-photos/botanica/02.webp", title: "Botanica 02" },
+    ],
+  },
+  {
+    slug: "grain",
+    title: "Grain",
+    subtitle: "Bois · veines · usure",
+    scope: "GRAIN",
+    family: "theme",
+    cover: "/private-photos/grain/01.webp",
+    photos: [
+      { src: "/private-photos/grain/01.webp", title: "Grain 01" },
+      { src: "/private-photos/grain/02.webp", title: "Grain 02" },
     ],
   },
   {
