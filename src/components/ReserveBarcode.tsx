@@ -2,7 +2,7 @@
 
 /* ============================================================
    ONEARTPIX — BARCODE GATE
-   Label → barcode → click opens two paths:
+   Gold button → barcode → click opens two paths:
    · enter an existing access code
    · request one (opens a modal)
    ============================================================ */
@@ -12,6 +12,7 @@ import AccessRequest from "@/components/AccessRequest";
 
 const GOLD = "#C9A96E";
 const WHITE = "#F4F2ED";
+const GREY = "#9a9892";
 const DIM = "#6b6a65";
 const LINE = "#2a2f38";
 
@@ -68,14 +69,24 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
   return (
     <div>
 
-      {/* === LABEL === */}
-      <div style={{ textAlign: "center", padding: "0 5vw 26px" }}>
-        <p style={{ color: GOLD, fontSize: "12px", letterSpacing: "0.3em", textTransform: "uppercase", margin: "0 0 8px" }}>
-          Enter with a code
-        </p>
-        <p style={{ color: DIM, fontSize: "11px", letterSpacing: "0.14em", margin: 0 }}>
-          {open ? "Close" : "Click the barcode"}
-        </p>
+      {/* === GOLD BUTTON === */}
+      <div style={{ textAlign: "center", padding: "0 5vw 34px" }}>
+        <button
+          onClick={() => setOpen(!open)}
+          onMouseEnter={() => setHot(true)}
+          onMouseLeave={() => setHot(false)}
+          style={{
+            background: open ? GOLD : "transparent",
+            border: "1px solid " + GOLD,
+            color: open ? "#0e1116" : WHITE,
+            fontFamily: "inherit", fontSize: "14px", fontWeight: 400,
+            letterSpacing: "0.26em", textTransform: "uppercase",
+            padding: "17px 44px", cursor: "pointer",
+            transition: "background .35s ease, color .35s ease",
+          }}
+        >
+          {open ? "Close" : "Enter with a code"}
+        </button>
       </div>
 
       {/* === BARCODE === */}
@@ -113,12 +124,12 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
       {/* === PANEL === */}
       <div style={{
         overflow: "hidden",
-        maxHeight: open ? "300px" : "0px",
+        maxHeight: open ? "320px" : "0px",
         transition: "max-height .55s cubic-bezier(0.4,0,0.2,1)",
         background: "#0b0d11",
         borderBottom: open ? "1px solid " + LINE : "none",
       }}>
-        <div style={{ maxWidth: "620px", margin: "0 auto", padding: "40px 5vw 46px", textAlign: "center" }}>
+        <div style={{ maxWidth: "640px", margin: "0 auto", padding: "44px 5vw 50px", textAlign: "center" }}>
 
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", justifyContent: "center" }}>
             <input
@@ -129,16 +140,16 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
               style={{
-                flex: "1 1 300px", background: "transparent", border: "1px solid " + LINE,
-                color: WHITE, fontFamily: "inherit", fontSize: "15px", letterSpacing: "0.18em",
-                textAlign: "center", padding: "15px 18px", outline: "none", boxSizing: "border-box",
+                flex: "1 1 320px", background: "transparent", border: "1px solid " + LINE,
+                color: WHITE, fontFamily: "inherit", fontSize: "16px", letterSpacing: "0.18em",
+                textAlign: "center", padding: "17px 18px", outline: "none", boxSizing: "border-box",
               }}
             />
             <button onClick={submit} disabled={busy || !code.trim()}
               style={{
                 background: "transparent", border: "1px solid " + GOLD, color: WHITE,
-                fontFamily: "inherit", fontSize: "13px", letterSpacing: "0.22em",
-                textTransform: "uppercase", padding: "15px 34px",
+                fontFamily: "inherit", fontSize: "14px", letterSpacing: "0.24em",
+                textTransform: "uppercase", padding: "17px 38px",
                 cursor: busy ? "default" : "pointer",
                 opacity: busy || !code.trim() ? 0.35 : 1,
               }}>
@@ -147,19 +158,23 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
           </div>
 
           {error ? (
-            <p style={{ color: DIM, fontSize: "11px", letterSpacing: "0.16em", textTransform: "uppercase", margin: "20px 0 0" }}>
+            <p style={{ color: GREY, fontSize: "12px", letterSpacing: "0.16em", textTransform: "uppercase", margin: "22px 0 0" }}>
               Invalid or expired code
             </p>
           ) : null}
 
           {/* --- second path --- */}
-          <p style={{ color: DIM, fontSize: "13px", margin: "28px 0 0" }}>
-            No code yet?{" "}
+          <div style={{ marginTop: "34px", paddingTop: "28px", borderTop: "1px solid #1c2129" }}>
+            <p style={{ color: GREY, fontSize: "13px", margin: "0 0 14px" }}>No code yet?</p>
             <button onClick={() => setModal(true)}
-              style={{ background: "none", border: "none", padding: 0, color: GOLD, fontFamily: "inherit", fontSize: "13px", cursor: "pointer", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+              style={{
+                background: "none", border: "1px solid " + LINE, color: GOLD,
+                fontFamily: "inherit", fontSize: "12px", letterSpacing: "0.24em",
+                textTransform: "uppercase", padding: "13px 30px", cursor: "pointer",
+              }}>
               Request a private code
             </button>
-          </p>
+          </div>
 
         </div>
       </div>
@@ -171,7 +186,7 @@ export default function ReserveBarcode({ images }: { images: string[] }) {
           <div onClick={(e) => e.stopPropagation()}
             style={{ position: "relative", width: "100%", maxWidth: "480px", background: "#0e1116", border: "1px solid " + LINE, padding: "44px 40px" }}>
             <button onClick={() => setModal(false)} aria-label="Close"
-              style={{ position: "absolute", top: "16px", right: "18px", background: "none", border: "none", color: DIM, fontSize: "20px", lineHeight: 1, cursor: "pointer", padding: "4px" }}>
+              style={{ position: "absolute", top: "16px", right: "18px", background: "none", border: "none", color: DIM, fontSize: "22px", lineHeight: 1, cursor: "pointer", padding: "4px" }}>
               ×
             </button>
             <AccessRequest scope="RESERVE" title="Request a private code" />
