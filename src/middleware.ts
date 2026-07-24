@@ -1,49 +1,45 @@
 /* ============================================================
    ONEARTPIX — MIDDLEWARE DE PROTECTION
-   Bloque tout /private/* ET les fichiers images /private-photos/*
-   tant que le cookie "oap_private" n'est pas valide.
+   Vérifie le code du cookie ET la portée du dossier demandé.
    ============================================================ */
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { verifyCode, canAccess } from "@/lib/access";
+import { getPrivateFolder } from "@/data/private";
 
-/* === LECTURE DU CODE (base64 → texte) === */
-/* Le code vit dans .env.local sous PRIVATE_CODE_B64.
-   Encodé en base64 pour éviter les problèmes de parsing dotenv. */
+export async function middleware(req: NextRequest) {
+  const pathname = req.nextUrl.pathname;
 
-function readCode(): string {
-  const b64 = process.env.PRIVATE_CODE_B64 || "";
-  if (!b64) return "";
-  try {
-    return atob(b64).trim();
-  } catch {
-    return "";
-  }
-}
-
-/* === LOGIQUE === */
-
-export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-
-  // La page de saisie du code doit rester accessible.
+  /* La porte reste toujours accessible. */
   if (pathname === "/private") return NextResponse.next();
 
-  const code = readCode();
-  const cookie = req.cookies.get("oap_private")?.value;
-  const authorized = code !== "" && cookie === code;
+  const cookie = req.cookies.get("oap_private")?.value || "";
+  const result = await verifyCode(cookie);
 
-  if (authorized) return NextResponse.next();
+  const back = req.nextUrl.clone();
+  back.pathname = "/private";
+  back.search = "";
 
-  // Non autorisé → retour à la porte.
-  const url = req.nextUrl.clone();
-  url.pathname = "/private";
-  url.search = "";
-  return NextResponse.redirect(url);
+  if (!result.ok) return NextResponse.redirect(back);
+
+  /* Page de génération de codes : toi seul. */
+  if (pathname.startsWith("/private/admin")) {
+    if (result.scope !== "ALL") return NextResponse.redirect(back);
+    return NextResponse.next();
+  }
+
+  /* Un dossier précis : la portée doit correspondre. */
+  const match = pathname.match(/^\/private\/([^/]+)$/);
+  if (match) {
+    const folder = getPrivateFolder(match[1]);
+    if (!folder || !canAccess(result.scope, folder.scope)) {
+      return NextResponse.redirect(back);
+    }
+  }
+
+  return NextResponse.next();
 }
-
-/* === PORTÉE === */
-/* Ne s'exécute QUE sur ces chemins. Le reste du site est intact. */
 
 export const config = {
   matcher: ["/private/:path*", "/private-photos/:path*"],
