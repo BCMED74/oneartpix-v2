@@ -2,8 +2,9 @@
    ONEARTPIX — GALERIE PRIVÉE
    Images : public/private-photos/<slug>/
 
-   scope  = la portée qui donne accès à ce dossier
-   family = theme (The Reserve) | client | perso
+   scope        = la portée qui donne accès au dossier
+   family       = theme (The Reserve) | client | perso
+   downloadable = autorise le téléchargement ZIP (dossier hd/)
    ============================================================ */
 
 export type PrivatePhoto = {
@@ -18,6 +19,7 @@ export type PrivateFolder = {
   subtitle?: string;
   scope: string;
   family: "theme" | "client" | "perso";
+  downloadable?: boolean;
   cover: string;
   photos: PrivatePhoto[];
 };
@@ -40,6 +42,20 @@ export const privateFolders: PrivateFolder[] = [
       { src: "/private-photos/nouveaux-tirages/03.webp", title: "Sans titre 03" },
     ],
   },
+  {
+    slug: "montagne",
+    title: "Montagne",
+    subtitle: "Sortie entre amis",
+    scope: "MONTAGNE",
+    family: "perso",
+    downloadable: true,
+    cover: "/private-photos/montagne/web/01.webp",
+    photos: [
+      { src: "/private-photos/montagne/web/01.webp" },
+      { src: "/private-photos/montagne/web/02.webp" },
+      { src: "/private-photos/montagne/web/03.webp" },
+    ],
+  },
 
   /* ---------- CLIENTS ---------- */
   {
@@ -56,11 +72,12 @@ export const privateFolders: PrivateFolder[] = [
   },
 
   /* ---------- THE RESERVE ---------- */
+  /* Portée unique : un seul code ouvre les sept territoires.  */
   {
     slug: "mountains-snow",
     title: "Mountains & Snow",
     subtitle: "Silence · altitude",
-    scope: "SNOW",
+    scope: "RESERVE",
     family: "theme",
     cover: "/private-photos/mountains-snow/01.webp",
     photos: [
@@ -73,7 +90,7 @@ export const privateFolders: PrivateFolder[] = [
     slug: "green",
     title: "Green",
     subtitle: "Forêts · canopées",
-    scope: "GREEN",
+    scope: "RESERVE",
     family: "theme",
     cover: "/private-photos/green/01.webp",
     photos: [
@@ -86,7 +103,7 @@ export const privateFolders: PrivateFolder[] = [
     slug: "botanica",
     title: "Botanica",
     subtitle: "Lumière traversante · matière",
-    scope: "BOTANICA",
+    scope: "RESERVE",
     family: "theme",
     cover: "/private-photos/botanica/01.webp",
     photos: [
@@ -98,7 +115,7 @@ export const privateFolders: PrivateFolder[] = [
     slug: "grain",
     title: "Grain",
     subtitle: "Bois · veines · usure",
-    scope: "GRAIN",
+    scope: "RESERVE",
     family: "theme",
     cover: "/private-photos/grain/01.webp",
     photos: [
@@ -110,7 +127,7 @@ export const privateFolders: PrivateFolder[] = [
     slug: "sea-water",
     title: "Sea & Water",
     subtitle: "Mouvement · surface",
-    scope: "SEA",
+    scope: "RESERVE",
     family: "theme",
     cover: "/private-photos/sea-water/01.webp",
     photos: [
@@ -123,7 +140,7 @@ export const privateFolders: PrivateFolder[] = [
     slug: "africa",
     title: "Africa",
     subtitle: "Lumière · immensité",
-    scope: "AFRICA",
+    scope: "RESERVE",
     family: "theme",
     cover: "/private-photos/africa/01.webp",
     photos: [
@@ -136,7 +153,7 @@ export const privateFolders: PrivateFolder[] = [
     slug: "wildlife",
     title: "Wildlife",
     subtitle: "Regards · présence",
-    scope: "WILDLIFE",
+    scope: "RESERVE",
     family: "theme",
     cover: "/private-photos/wildlife/01.webp",
     photos: [
@@ -157,7 +174,7 @@ export function allScopes(): string[] {
   return Array.from(new Set(privateFolders.map((f) => f.scope))).sort();
 }
 
-/* Les thématiques visibles publiquement sur The Reserve. */
+/* Les thématiques de The Reserve. */
 export function themeFolders(): PrivateFolder[] {
   return privateFolders.filter((f) => f.family === "theme");
 }
