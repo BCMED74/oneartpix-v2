@@ -7,7 +7,7 @@
 
 import type { PrivateFolder } from "@/data/private";
 
-export default function PrivateIndex({ folders }: { folders: PrivateFolder[] }) {
+export default function PrivateIndex({ folders, isMaster = false }: { folders: PrivateFolder[]; isMaster?: boolean }) {
   /* === DÉCONNEXION === */
   async function lock() {
     await fetch("/api/private", { method: "DELETE" });
@@ -19,7 +19,8 @@ export default function PrivateIndex({ folders }: { folders: PrivateFolder[] }) 
       {/* === EN-TÊTE === */}
       <header className="head">
         <p className="eyebrow">Privé</p>
-        <h1>Galerie</h1>
+       <h1>Galerie</h1>
+        {isMaster ? <a href="/private/admin" style={{ color: "#6b6a65", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", textDecoration: "none", display: "inline-block", marginTop: 12 }}>Générer un code</a> : null}
         <button className="lock" onClick={lock}>
           Verrouiller
         </button>
